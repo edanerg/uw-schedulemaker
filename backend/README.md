@@ -8,3 +8,6 @@ pip install -r requirements.txt
 
 ## Run backend
 FLASK_APP=database flask run
+
+## Some info
+Backend Local Port number: 5000 

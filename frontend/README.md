@@ -1,4 +1,5 @@
 ## Frontend repo description
+TODO
 
 ## Compile:
 yarn
@@ -7,4 +8,5 @@ yarn
 yarn start
 
 
-Frontend Port number: 5000 
+## Some info
+Frontend Local Port number: 8001 

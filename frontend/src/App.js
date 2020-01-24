@@ -10,6 +10,9 @@ function App() {
       response.json().then(data => {
         const { courses } = data;
         setBackendMessage(courses);
+      }).catch(err => {
+        setBackendMessage("Error getting info");
+        console.error(err);
       });
     });
   }, []);
@@ -17,7 +20,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        {/* ADD stuff here */}
+        {/* TODO: Add stuff here */}
         {`Backend Message: ${backendMessage}`}
       </header>
     </div>

@@ -6,7 +6,6 @@ app = Flask(__name__)
 api = Api(app)
 
 # TODO: Change to receive data from database
-
 class Courses(Resource):
     def get(self):
         return {'courses': ['cs', 'maths', 'biology']}

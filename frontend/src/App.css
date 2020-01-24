@@ -1,5 +1,5 @@
 .App {
-  background-color: #e6dbdb;
+  background-color: #ffffff;
   text-align: left;
   padding: 60px;
 }
@@ -11,5 +11,5 @@
   /* align-items: center; */
   /* justify-content: center; */
   font-size: calc(10px + 2vmin);
-  color: rgb(36, 30, 30);
+  color: rgb(0, 0, 0);
 }
