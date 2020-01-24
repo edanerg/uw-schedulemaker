@@ -80,7 +80,6 @@ CREATE TABLE IF NOT EXISTS Reserve (
     enrollment_total INTEGER NOT NULL CHECK(enrollment_total >= 0)
 );
 
-
 -- Theres some issue with the syntax for this one:
 -- Will likely be searching by class_id
 -- CREATE IF NOT EXISTS INDEX reserve_class_id
