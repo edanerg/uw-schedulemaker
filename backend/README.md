@@ -1,3 +1,6 @@
+https://cs348-database10.appspot.com/courses
+
+
 ## 1. Set up your virtual env
 pip install pipenv
 
@@ -9,7 +12,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 
 ## 3. Run backend
-FLASK_APP=database flask run
+gunicorn --bind 0.0.0.0:8002 app:app
 
 ## Some info
-Backend Local Port number: 5000 
+Backend Local Port number: 8080

@@ -4,9 +4,9 @@ import './App.css';
 function App() {
   // Testing connection with backend
   const [backendMessage, setBackendMessage] = useState('');
-
+  
   useEffect(() => {
-    fetch('/courses').then(response => {
+    fetch(`/courses`).then(response => {
       response.json().then(data => {
         const { courses } = data;
         setBackendMessage(courses);
