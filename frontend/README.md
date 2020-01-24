@@ -1,2 +1,10 @@
 ## Frontend repo description
-TODO
+
+## Compile:
+yarn
+
+## Start the app:
+yarn start
+
+
+Frontend Port number: 5000 
