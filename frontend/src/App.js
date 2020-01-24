@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
 
-const serverURL = 'http://cs348-database10.appspot.com/';
+const serverURL = 'https://cs348-database10.appspot.com';
 
 function App() {
   // Testing connection with backend
