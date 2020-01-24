@@ -12,7 +12,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 
 ## 3. Run backend
-gunicorn --bind 0.0.0.0:8002 app:app
+gunicorn --bind 0.0.0.0:8080 app:app
 
 ## Some info
 Backend Local Port number: 8080

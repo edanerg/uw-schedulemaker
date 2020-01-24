@@ -1,20 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
 
+const serverURL = 'http://cs348-database10.appspot.com/';
+
 function App() {
   // Testing connection with backend
   const [backendMessage, setBackendMessage] = useState('');
   
   useEffect(() => {
-    fetch(`/courses`).then(response => {
-      response.json().then(data => {
+    fetch(`${serverURL}/courses`)
+      .then(response => response.json())
+      .then(data => {
         const { courses } = data;
         setBackendMessage(courses);
-      }).catch(err => {
+      })
+      .catch(err => {
         setBackendMessage("Error getting info");
         console.error(err);
       });
-    });
   }, []);
 
   return (
