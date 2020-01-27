@@ -1,12 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
 
-
-let serverURL = 'https://cs348-database10.appspot.com';
-
-if (process.env.NODE_ENV !== 'production') {
-  serverURL = "http://localhost:8080";
-}
+let serverURL = process.env.REACT_APP_SERVER_URL;
 
 function App() {
   // Testing connection with backend

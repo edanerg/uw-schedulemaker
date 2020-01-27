@@ -6,6 +6,6 @@ TODO
 ## Compile:
 yarn
 
-## Start the app:
-yarn start
+## Start the app in local:
+yarn start:dev
  

@@ -11,7 +11,8 @@
     "react-scripts": "3.3.0"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "REACT_APP_SERVER_URL=https://cs348-database10.appspot.com react-scripts start",
+    "start:dev": "REACT_APP_SERVER_URL=http://localhost:8080 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
