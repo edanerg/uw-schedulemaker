@@ -5,6 +5,7 @@ import sqlalchemy
 
 server_env = os.getenv('SERVER_ENV', 'development')
 
+# Will need to store and secure the db info somewhere else
 db_user = "root"
 db_pass = "cs348-database"
 db_name = "schedulemaker"
