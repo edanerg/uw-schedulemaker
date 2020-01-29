@@ -7,7 +7,7 @@
 CREATE TABLE IF NOT EXISTS Course (
     id INTEGER NOT NULL UNIQUE,
     subject VARCHAR(10) NOT NULL,
-    catalog_number INTEGER NOT NULL,
+    catalog_number VARCHAR(10) NOT NULL,
     name VARCHAR(100) NOT NULL,
     description VARCHAR(1000),
     PRIMARY KEY(subject, catalog_number)
