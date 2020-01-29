@@ -1,5 +1,5 @@
 ## Web App link
-http://cs348-webapp10.appspot.com/
+https://cs348-webapp10.appspot.com/
 
 ## Backend API link
 https://cs348-database10.appspot.com/courses
