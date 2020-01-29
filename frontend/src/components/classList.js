@@ -73,7 +73,7 @@ class ClassList extends Component {
                                 {c.id}
                             </Typography>
                             <Typography variant="body2" color="textSecondary" component="p">
-                                {`${c.subject} ${c.catalogue_number}`}
+                                {`${c.subject} ${c.catalog_number}`}
                             </Typography>
                             <Typography variant="body2" color="textSecondary" component="p">
                                 {c.description}
