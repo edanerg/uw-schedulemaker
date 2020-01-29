@@ -1,3 +1,9 @@
+## Web App link
+http://cs348-webapp10.appspot.com/
+
+## Backend API link
+https://cs348-database10.appspot.com/courses
+
 ## Database Creation
 The app will execute a sql file that creates the tables on the first request.
 

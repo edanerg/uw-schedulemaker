@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { Component } from 'react';
 import TimeSelect from './components/timeSelect';
 import ClassList from './components/classList';
 import Bar from './components/bar';
@@ -15,37 +15,34 @@ const theme = createMuiTheme({
   }
 });
 
-function App() {
-  // Testing connection with backend
-  /*
-  const [backendMessage, setBackendMessage] = useState('');
-  
-   useEffect(() => {
-    fetch(`${serverURL}/courses`)
-      .then(response => response.json())
-      .then(data => {
-        const { courses } = data;
-        setBackendMessage(courses);
-      })
-      .catch(err => {
-        setBackendMessage("Error getting info");
-        console.error(err);
-      });
-  }, []); */
+class App extends Component {
 
-  return (
-    <ThemeProvider theme={theme}>
-      <Bar/>
-      <div className="App">
-        <div className="app-body">
-          <div className="search-criteria">
-            <TimeSelect/>
+  state = {
+    courses: [],
+  }
+
+  async componentDidMount() {
+    const response = await fetch(`${serverURL}/courses`);
+    const { courses } = await response.json();
+    console.log('Courses', courses);
+    this.setState({ courses });
+  }
+
+  render() {
+    return (
+      <ThemeProvider theme={theme}>
+        <Bar/>
+        <div className="App">
+          <div className="app-body">
+            <div className="search-criteria">
+              <TimeSelect/>
+            </div>
+            <ClassList courses={this.state.courses}/>
           </div>
-          <ClassList/>
         </div>
-      </div>
-    </ThemeProvider>
-  );
+      </ThemeProvider>
+    );
+  }
 }
 
 export default App;

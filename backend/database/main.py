@@ -19,24 +19,46 @@ fd.close()
 # Get the createtables commands
 createtable_file_commands = createtable_file.split(';')
 
-
-# create_tables() will execute when frontend does it's first api request
-# can add an admin button to do this
 @app.before_first_request
 def create_tables():
+  """
+    this is a test function
+    will execute when frontend does it's first api request
+    executes sql commands from create tables file
+  """
   with db.connect() as conn:
-      # Execute every command from the createtables file
       for command in createtable_file_commands:
           if command:
             conn.execute(command)
 
 
 class Courses(Resource):
+  """
+    '/courses' route
+    GET: returns list of all the courses from SQL database
+    POST: todo, can grab specific course
+  """
   def get(self):
-      return {'courses': ['cs', 'maths', 'biology']}
+    with db.connect() as conn:
+      all_courses = conn.execute("SELECT * FROM Course")
+      result = []
+      for course in all_courses:
+        course_info = {
+          'id': course['id'],
+          'subject': course['subject'],
+          'catalog_number': course['catalog_number'],
+          'name': course['name'],
+          'description': course['description'],
+        }
+        result.append(course_info)
+      return {'courses': result}
 
 
 class Main(Resource):
+  """
+    this is a test function
+    returns msg on '/' route
+  """
   def get(self):
       return "Hi there!"
 

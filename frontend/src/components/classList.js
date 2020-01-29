@@ -30,14 +30,20 @@ const defaultCourses = [
         time: "MW 12:00-13:30",
         instructor: "Higashikata Josuke",
         location: "Morioh"
-    }]
+    }
+]
 
 
 class ClassList extends Component {
 
     state = {
-        courses: defaultCourses,
+        courses: [],
         hoveredCourseId: null
+    }
+    componentDidUpdate(prevProps) {
+      if (this.props.courses !== prevProps.courses) {
+        this.setState({ courses: this.props.courses });
+      }
     }
 
     mouseEnter = id => {
@@ -64,13 +70,13 @@ class ClassList extends Component {
                                 {c.name}
                             </Typography>
                             <Typography variant="body2" color="textSecondary" component="p">
-                                {c.time}
+                                {c.id}
                             </Typography>
                             <Typography variant="body2" color="textSecondary" component="p">
-                                {c.instructor}
+                                {`${c.subject} ${c.catalogue_number}`}
                             </Typography>
                             <Typography variant="body2" color="textSecondary" component="p">
-                                {c.location}
+                                {c.description}
                             </Typography>
                         </CardContent>
                     </Card>
