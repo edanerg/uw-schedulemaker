@@ -1,13 +1,26 @@
 import React, { useEffect, useState } from 'react';
+import TimeSelect from './components/timeSelect';
+import ClassList from './components/classList';
+import Bar from './components/bar';
+import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import { amber, grey } from '@material-ui/core/colors';
 import './App.css';
 
 let serverURL = process.env.REACT_APP_SERVER_URL;
 
+const theme = createMuiTheme({
+  palette: {
+    primary: amber,
+    secondary: grey
+  }
+});
+
 function App() {
   // Testing connection with backend
+  /*
   const [backendMessage, setBackendMessage] = useState('');
   
-  useEffect(() => {
+   useEffect(() => {
     fetch(`${serverURL}/courses`)
       .then(response => response.json())
       .then(data => {
@@ -18,15 +31,20 @@ function App() {
         setBackendMessage("Error getting info");
         console.error(err);
       });
-  }, []);
+  }, []); */
 
   return (
-    <div className="App">
-      <header className="App-header">
-        {/* TODO: Add stuff here */}
-        {`Backend Message: ${backendMessage}`}
-      </header>
-    </div>
+    <ThemeProvider theme={theme}>
+      <Bar/>
+      <div className="App">
+        <div className="app-body">
+          <div className="search-criteria">
+            <TimeSelect/>
+          </div>
+          <ClassList/>
+        </div>
+      </div>
+    </ThemeProvider>
   );
 }
 

@@ -1,15 +1,25 @@
 .App {
-  background-color: #ffffff;
+  text-align: center;
+}
+
+.app-body {
   text-align: left;
-  padding: 60px;
+  display: inline-block;
+  margin-left: 50px;
+  margin-right: 50px;
+  margin-top: 30px;
+  min-width: 800px;
+  max-width: 850px;
+}
+
+.search-criteria {
+  margin-bottom: 20px;
 }
 
 .App-header {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  /* align-items: center; */
-  /* justify-content: center; */
   font-size: calc(10px + 2vmin);
   color: rgb(0, 0, 0);
 }
