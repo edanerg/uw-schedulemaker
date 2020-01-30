@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS ClassTime (
     id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
     class_id INTEGER NOT NULL REFERENCES Class(id) ON DELETE CASCADE ON UPDATE CASCADE,
     start_time TIME NOT NULL, -- format: 'hh:mm:ss', stored in 24-hour EST
-    end_time TIME NOT NULL CHECK(end_time > start_time),
+    end_time TIME NOT NULL,
     weekdays VARCHAR(10) NOT NULL, -- M,T,W,Th,F,Sa,Su
     start_date DATE,
     end_date DATE CHECK(end_date >= start_date),
