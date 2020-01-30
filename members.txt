@@ -7,3 +7,4 @@ Ana:
 - Created Rest APIs on the backend using python3 so that the frontend can fetch info through API requests.
 - Used sqlAlchemy to connect to SQL instance in GCP. 
 - Deployed project to production (GCP).
+Cheng Keat Chong: - Wrote up report.pdf
