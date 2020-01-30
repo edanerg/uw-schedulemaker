@@ -14,7 +14,6 @@ db_query = {
 }
 
 if (server_env == 'development'):
-  cloud_sql_connection_name = "host=localhost?port=3306"
   db_query = {
       "host": "localhost",
       "port": 3306,
