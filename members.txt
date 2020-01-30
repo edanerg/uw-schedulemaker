@@ -8,3 +8,4 @@ Ana:
 - Used sqlAlchemy to connect to SQL instance in GCP. 
 - Deployed project to production (GCP).
 Cheng Keat Chong: - Wrote up report.pdf
+Yuetong Wang: - created git repo and add front-end code.
