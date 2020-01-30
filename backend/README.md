@@ -19,5 +19,9 @@ Download cloud_sql_proxy in your root folder and execute:
 
 `./cloud_sql_proxy -instances=cs348-database10:us-central1:cs348demo-db=tcp:3306`
 
+
+## 5. To populate our SQL database with Waterloo data using waterloo api
+Run `python3 database/populate_sql_database.py`
+
 ## Some info
 Backend Local Port number: 8080
