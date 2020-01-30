@@ -21,6 +21,7 @@ Download cloud_sql_proxy in your root folder and execute:
 
 
 ## 5. To populate our SQL database with Waterloo data using waterloo api
+(in progress)
 Run `python3 database/populate_sql_database.py`
 
 ## Some info
