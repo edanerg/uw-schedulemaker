@@ -9,9 +9,6 @@ app = Flask(__name__)
 api = Api(app)
 CORS(app)
 
-sql_folder = f'{os.getcwd()}/database/sql/'
-
-
 class Courses(Resource):
   """
     '/courses' route

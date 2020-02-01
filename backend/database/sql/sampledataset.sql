@@ -7,6 +7,8 @@
 
 INSERT INTO Course
 VALUES (004417, 'CS', '348', 'Introduction to Database Management', 'The main objective of this course is to introduce students to fundamentals of database technology by studying databases from three viewpoints: those of the database user, the database designer, and the database administrator. It teaches the use of a database management system (DBMS) by treating it as a black box, focusing only on its functionality and its interfaces. Topics include: introduction to database systems, relational database systems, database design methodology, SQL and interfaces, database application development, concept of transactions, ODBC, JDBC, database tuning, database Administration, and current topics (distributed databases, data warehouses, data mining).');
+
+INSERT INTO Course
 VALUES (004407, 'CS', '436', 'Networks and Distributed Computer Systems', 'An introduction to networks, protocols, and distributed systems. Layered models, resource management, naming, addressing and routing, reliable communication, security, and higher-level services.');
 
 INSERT INTO Instructor (name)
