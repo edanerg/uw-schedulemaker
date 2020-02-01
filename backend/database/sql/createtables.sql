@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS Course (
 -- The endpoint only provides instructor name, so that is the primary index.
 -- We have no way of handling instructors with the same name. 
 CREATE TABLE IF NOT EXISTS Instructor (
-    id INTEGER NOT NULL UNIQUE AUTO_INCREMENT,
+    id SERIAL NOT NULL,
     name VARCHAR(30) NOT NULL PRIMARY KEY
 );
 
@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS Instructor (
 -- * section_number
 -- * held_with
 CREATE TABLE IF NOT EXISTS Class (
-    id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    id SERIAL NOT NULL PRIMARY KEY,
     course_id INTEGER NOT NULL REFERENCES Course(id) ON DELETE CASCADE,
     units FLOAT NOT NULL CHECK (units >= 0),
     note VARCHAR(100),  -- sometimes the note will specify to choose a TUT
@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS Class (
 -- Class Time --
 -- Some classes have multiple locations. For example, MATH 135 has one class MWF and one class T in different rooms
 CREATE TABLE IF NOT EXISTS ClassTime (
-    id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    id SERIAL NOT NULL PRIMARY KEY,
     class_id INTEGER NOT NULL REFERENCES Class(id) ON DELETE CASCADE ON UPDATE CASCADE,
     start_time TIME NOT NULL, -- format: 'hh:mm:ss', stored in 24-hour EST
     end_time TIME NOT NULL,

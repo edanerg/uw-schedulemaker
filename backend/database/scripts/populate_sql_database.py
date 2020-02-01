@@ -1,5 +1,4 @@
 import requests
-# from .db_connect import db
 
 # TODO: write function to grab data from waterloo api
 
