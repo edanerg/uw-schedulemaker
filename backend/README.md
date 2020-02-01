@@ -36,7 +36,7 @@ postgres=# `CREATE DATABASE schedulemaker`
 #### To run the create_tables script:
 
 python3 ./database/scripts/create_tables.py
-
+<br/>
 
 ### For connecting to production database:
 Download cloud_sql_proxy in your root folder and execute:
