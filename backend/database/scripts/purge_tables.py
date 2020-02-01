@@ -1,3 +1,5 @@
+######## Script to purge tables in our local database
+
 import sqlalchemy
 
 db = sqlalchemy.create_engine("postgresql+pg8000://root:tmp@localhost:5432/schedulemaker")

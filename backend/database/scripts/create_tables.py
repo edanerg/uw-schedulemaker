@@ -1,7 +1,8 @@
+######## Script to create tables in our local database
+
 import sqlalchemy
 import sys
 
-# Script to create tables in our local database
 db = sqlalchemy.create_engine("postgresql+pg8000://root:tmp@localhost:5432/schedulemaker")
 
 # Open and read the createtables.sql file
