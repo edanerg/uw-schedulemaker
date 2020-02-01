@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS ClassTime (
     end_time TIME NOT NULL,
     weekdays VARCHAR(10) NOT NULL, -- M,T,W,Th,F,Sa,Su
     start_date DATE,
-    end_date DATE CHECK(end_date >= start_date),
+    end_date DATE,
     is_active BOOLEAN NOT NULL DEFAULT TRUE, -- true if is_tba, is_cancelled, and is_closed are all false
     building VARCHAR(10) NOT NULL,
     room VARCHAR(10) NOT NULL
