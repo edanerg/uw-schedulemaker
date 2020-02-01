@@ -6,6 +6,7 @@ pip install pipenv
 
 ## 2. Activate virtual environment
 python3 -m venv venv
+
 source venv/bin/activate
 
 ## 3. Install needed modules
@@ -20,21 +21,28 @@ gunicorn --bind 0.0.0.0:8080 app:app
 I followed this tutorial: https://www.codementor.io/@engineerapart/getting-started-with-postgresql-on-mac-osx-are8jcopb
 
 Which sums up to this:
+
 `brew install postgresql`
+
 `pg_ctl -D /usr/local/var/postgres start && brew services start postgresql`
+
 `psql postgres`
 
 Our database name is schedulemaker, type in this when posgres started:
+
 postgres=# `CREATE DATABASE schedulemaker`
 
 To create tables:
+
 python3 ./database/scripts/create_tables.py
 
 ### For connecting to production database:
 Download cloud_sql_proxy in your root folder and execute:
 
 For development database:
+
 `./cloud_sql_proxy -instances=cs348-database10:us-central1:cs348db=tcp:3306`
 
 For development database:
+
 `./cloud_sql_proxy -instances=cs348-database10:us-central1:cs348-production-db=tcp:3306`
