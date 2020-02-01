@@ -1,6 +1,6 @@
 import sqlalchemy
 
-db = sqlalchemy.create_engine("postgresql+pg8000://root:@localhost:5432/schedulemaker")
+db = sqlalchemy.create_engine("postgresql+pg8000://root:tmp@localhost:5432/schedulemaker")
 
 # Open and read the createtables.sql file
 path_to_purgetables = 'database/sql/purgetables.sql'
