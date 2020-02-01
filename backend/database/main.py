@@ -11,26 +11,6 @@ CORS(app)
 
 sql_folder = f'{os.getcwd()}/database/sql/'
 
-# Open and read the createtables.sql and sampledataset file
-path_to_createtables = f'{sql_folder}createtables.sql'
-fd = open(path_to_createtables, 'r')
-createtable_file = fd.read()
-fd.close()
-# Get the createtables commands
-createtable_file_commands = createtable_file.split(';')
-
-@app.before_first_request
-def create_tables():
-  """
-    this is a test function
-    will execute when frontend does it's first api request
-    executes sql commands from create tables file
-  """
-  with db.connect() as conn:
-      for command in createtable_file_commands:
-          if command:
-            conn.execute(command)
-
 
 class Courses(Resource):
   """
