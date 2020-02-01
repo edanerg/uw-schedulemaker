@@ -10,7 +10,7 @@ CREATE TABLE Course (
     catalog_number VARCHAR(10) NOT NULL,
     name VARCHAR(100) NOT NULL,
     description VARCHAR(1000),
-    PRIMARY KEY(subject, catalog_number)
+    PRIMARY KEY (subject, catalog_number)
 );
 
 -- Instructor --
