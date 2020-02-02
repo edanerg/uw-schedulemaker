@@ -33,9 +33,15 @@ Our database name is schedulemaker, type in this when posgres started:
 postgres=# `CREATE DATABASE schedulemaker`
 
 
-#### To run the create_tables script:
+#### To run scripts for local database:
+`python3 ./database/scripts/file.py`
 
+E.g:
+
+```
 python3 ./database/scripts/create_tables.py
+python3 ./database/scripts/populate_sampledataset.py
+```
 
 ### For connecting to production database:
 Download cloud_sql_proxy in your root folder and execute:
