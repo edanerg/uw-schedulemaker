@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Grid from '@material-ui/core/Grid';
 import 'date-fns';
 import DateFnsUtils from '@date-io/date-fns';
@@ -10,22 +10,29 @@ import { FormControl,
          FormControlLabel,
          Checkbox,
          Fab} from '@material-ui/core';
-import SearchIcon from '@material-ui/icons/Search';
+import RefreshIcon from '@material-ui/icons/Refresh';
 import serverURL from '../config';
 import axios from 'axios';
 
-function TimeSelect(props) {
+const defaultSelectedDays = {M: false, T: false, W: false, Th: false, F: false};
+function TimeSelect({ setClasses } : props) {
 
-    const [selectedDays, setSelectedDays] = useState({M: false, T: false, W: false, Th: false, F: false});
+    const [selectedDays, setSelectedDays] = useState(defaultSelectedDays);
     const [startTime, setStartTime] = useState(null);
     const [endTime, setEndTime] = useState(null);
 
-    const search = () => {
-        axios.get(`${serverURL}/class`, {params: 
-            {weekdays: Object.keys(selectedDays).filter(k => selectedDays[k]).join(""),
-            from_time: startTime ? startTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', hour12: false}) : undefined,
-            to_time: endTime ? endTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', hour12: false}) : undefined}})
-            .then(res => props.setClasses(res.data.classes));
+    useEffect(() => {
+      axios.get(`${serverURL}/class`, {params: 
+        {weekdays: Object.keys(selectedDays).filter(k => selectedDays[k]).join(""),
+        from_time: startTime ? startTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', hour12: false}) : undefined,
+        to_time: endTime ? endTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', hour12: false}) : undefined}})
+        .then(res => setClasses(res.data.classes));
+    }, [setClasses, selectedDays, startTime, endTime]);
+
+    const resetSearch = () => {
+      setSelectedDays(defaultSelectedDays);
+      setStartTime(null);
+      setEndTime(null);
     }
 
     return (
@@ -85,7 +92,7 @@ function TimeSelect(props) {
                     }}
                     style={{width: "180px"}}
                 />
-                <Fab color="primary" size="small" style={{marginTop: "20px"}} onClick={search}><SearchIcon /></Fab>
+                <Fab color="primary" size="small" style={{marginTop: "20px"}} onClick={resetSearch}><RefreshIcon /></Fab>
             </Grid>
         </MuiPickersUtilsProvider>
     )
