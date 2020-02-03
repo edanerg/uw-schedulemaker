@@ -37,6 +37,11 @@ postgres=# `CREATE DATABASE schedulemaker`
 
 python3 ./database/scripts/create_tables.py
 
+### Alex: Above might not work if you have different db username or the sql contains comments
+### You can try this:
+
+python3 ./database/scripts/execute_sql.py -f createtables -u yourUsername -p yourPassword
+
 ### For connecting to production database:
 Download cloud_sql_proxy in your root folder and execute:
 

@@ -14,7 +14,8 @@ import { Select,
          InputLabel,
          Fab} from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
-
+import serverURL from '../config';
+import axios from 'axios';
 
 const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 const MenuProps = {
@@ -52,16 +53,11 @@ class timeSelect extends Component {
     }
 
     search = () => {
-        /* 
-        TODO: call backend functions
-        maybe need to add redux
-         */
+        axios.post(`${serverURL}/courses`,{...this.state})
+        .then(res => this.props.setCourses(res));
     }
 
     render() {
-        /* 
-        TODO: get rid of ugly inline styling
-         */
         return (
             <MuiPickersUtilsProvider utils={DateFnsUtils}>
                 <Grid container justify="space-around" alignItems="center">

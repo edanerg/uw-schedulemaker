@@ -2,8 +2,10 @@ import React, { Component } from 'react';
 import { AppBar,
          Toolbar,
          IconButton,
-         Typography } from '@material-ui/core';
+         Typography, 
+         Button} from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
+import { Link, BrowserRouter as Router } from 'react-router-dom';
 
 
 class Bar extends Component {
@@ -12,6 +14,12 @@ class Bar extends Component {
           2. consider adding a searching bar to search course name
           3. consider adding a side bar
      */
+    onLogout = () => {
+        if (this.props.user) {
+            this.props.setUser(null);
+        }
+    }
+
     render() {
         return (
             <AppBar position="static">
@@ -23,10 +31,30 @@ class Bar extends Component {
                             aria-label="open drawer">
                             <MenuIcon />
                         </IconButton>
-                        <Typography variant="h6" noWrap>
-                            UWScheduling
-                        </Typography>
+                        <Link to="/" style={{ textDecoration: 'none', color: "black"}}>
+                            <Typography variant="h6" noWrap>
+                                UWScheduling
+                            </Typography>
+                        </Link>
                     </div>
+                    {!this.props.user ?
+                    <Link to="/login" style={{ textDecoration: 'none', color: "black"}}>
+                        <Button>
+                            Log In
+                        </Button>
+                    </Link>
+                    :
+                    <div style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
+                        <Typography variant="h6" noWrap style={{marginRight: "20px"}}>
+                            Welcome, {this.props.user.username}
+                        </Typography>
+                        <Link to="." style={{ textDecoration: 'none', color: "black"}} onClick={this.onLogout}>
+                            <Button>
+                                Log Out
+                            </Button>
+                        </Link>
+                    </div>
+                    }
                 </Toolbar>
             </AppBar>
         )

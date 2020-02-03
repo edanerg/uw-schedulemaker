@@ -4,7 +4,7 @@
 -- Course --
 -- Will be querying this table mainly by subject and catalog number, since that is the way to 
 -- get the classes for the course.
-CREATE TABLE Course (
+CREATE TABLE IF NOT EXISTS Course (
     id INTEGER NOT NULL UNIQUE,
     subject VARCHAR(10) NOT NULL,
     catalog_number VARCHAR(10) NOT NULL,
@@ -16,7 +16,7 @@ CREATE TABLE Course (
 -- Instructor --
 -- The endpoint only provides instructor name, so that is the primary index.
 -- We have no way of handling instructors with the same name. 
-CREATE TABLE Instructor (
+CREATE TABLE IF NOT EXISTS Instructor (
     id SERIAL NOT NULL PRIMARY KEY,
     name VARCHAR(30) NOT NULL
 );
@@ -26,7 +26,7 @@ CREATE TABLE Instructor (
 -- * class_type
 -- * section_number
 -- * held_with
-CREATE TABLE Class (
+CREATE TABLE IF NOT EXISTS Class (
     id SERIAL NOT NULL PRIMARY KEY,
     course_id INTEGER NOT NULL REFERENCES Course(id) ON DELETE CASCADE,
     units FLOAT NOT NULL CHECK (units >= 0),
@@ -50,7 +50,7 @@ CREATE TABLE Class (
 
 -- Class Time --
 -- Some classes have multiple locations. For example, MATH 135 has one class MWF and one class T in different rooms
-CREATE TABLE ClassTime (
+CREATE TABLE IF NOT EXISTS ClassTime (
     id SERIAL NOT NULL PRIMARY KEY,
     class_id INTEGER NOT NULL REFERENCES Class(id) ON DELETE CASCADE ON UPDATE CASCADE,
     start_time TIME NOT NULL, -- format: 'hh:mm:ss', stored in 24-hour EST
@@ -64,7 +64,7 @@ CREATE TABLE ClassTime (
 );
 
 -- Connects an instructor to a class time (since a class time can apparently be taught by multiple instructors)
-CREATE TABLE InstructorClassTime(
+CREATE TABLE IF NOT EXISTS InstructorClassTime(
     instructor_id INTEGER NOT NULL REFERENCES Instructor(id) ON DELETE CASCADE,
     class_time_id INTEGER NOT NULL REFERENCES ClassTime(id) ON DELETE CASCADE,
     PRIMARY KEY(instructor_id, class_time_id)
@@ -72,12 +72,24 @@ CREATE TABLE InstructorClassTime(
 
 -- Reserve --
 -- Multiple reserves can be associated with one class
-CREATE TABLE Reserve (
+CREATE TABLE IF NOT EXISTS Reserve (
     id SERIAL NOT NULL PRIMARY KEY, -- not sure if needed
     class_id INTEGER NOT NULL REFERENCES Class(id) ON DELETE CASCADE,
     reserve_group_name VARCHAR(15) NOT NULL,
     enrollment_capacity INTEGER NOT NULL CHECK(enrollment_capacity >= 0),
     enrollment_total INTEGER NOT NULL CHECK(enrollment_total >= 0)
+);
+
+
+CREATE TABLE IF NOT EXISTS AppUser (
+    username VARCHAR(30) NOT NULL PRIMARY KEY,
+    schedule VARCHAR(50)
+);
+
+CREATE TABLE IF NOT EXISTS CoursesTaken (
+    username VARCHAR(30) NOT NULL REFERENCES AppUser(username),
+    course_id INTEGER NOT NULL REFERENCES Course(id),
+    PRIMARY KEY (username, course_id)
 );
 
 -- Theres some issue with the syntax for this one:
