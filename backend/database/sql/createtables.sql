@@ -5,7 +5,7 @@
 -- Will be querying this table mainly by subject and catalog number, since that is the way to 
 -- get the classes for the course.
 CREATE TABLE IF NOT EXISTS Course (
-    id INTEGER NOT NULL UNIQUE,
+    id INTEGER NOT NULL,
     subject VARCHAR(10) NOT NULL,
     catalog_number VARCHAR(10) NOT NULL,
     name VARCHAR(100) NOT NULL,
