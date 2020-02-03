@@ -5,3 +5,5 @@ DELETE FROM ClassTime;
 DELETE FROM Class;
 DELETE FROM Instructor;
 DELETE FROM Course;
+DELETE FROM User;
+DELETE FROM CoursesTaken;

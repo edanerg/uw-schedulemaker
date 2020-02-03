@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import ClassSearch from './components/classSearch';
 import Bar from './components/bar';
 import Login from './components/login';
@@ -21,94 +21,42 @@ const theme = createMuiTheme({
   }
 });
 
-const defaultCourses = [
-  {   id: "1",
-      name: "JJ101",
-      subject: "SS",
-      catalog_number: "SSS",
-      description: "fuck",
-      time: "MWF 9:00-10:20",
-      instructor: "Kujo Jotaro",
-      location: "Egypt"
-  },
-  {   id: "2",
-      name: "JJ201",
-      time: "F 19:00-21:00",
-      subject: "SS",
-      catalog_number: "SSS",
-      description: "fuck",
-      instructor: "Johny Jostar",
-      location: "The Wild Wacky West"
-  },
-  {   id: "3",
-      name: "JJ301",
-      time: "M 19:00-21:00",
-      subject: "SS",
-      catalog_number: "SSS",
-      description: "fuck",
-      instructor: "Jonathon Jostar",
-      location: "Some Ramdom English Mansion"
-  },
-  {   id: "4",
-      name: "JJ401",
-      time: "MW 12:00-13:30",
-      subject: "SS",
-      catalog_number: "SSS",
-      description: "fuck",
-      instructor: "Higashikata Josuke",
-      location: "Morioh"
-  }
-]
+function App(){
 
-class App extends Component {
+  const [coursesTaken, setCoursesTaken] = useState([]);
+  const [user, setUser] = useState(null);
+  const [classes, setClasses] = useState([]);
 
-  state = {
-    courses: [],
-    user: null
-  }
 
-  setUser = user => {
-    this.setState({
-      user: user
+  useEffect(() => {
+    axios.get(`${serverURL}/class`).then(res => {
+      console.log(res.data.classes);
+      setClasses(res.data.classes);
     })
-  }
+  }, []);
 
-  setCourses = courses => {
-    this.setState({
-      courses: courses
-    })
-  }
-
-  componentDidMount() {
-    axios.get(`${serverURL}/courses`).then(res => {
-      this.setState({
-        courses: res.data.courses
-      })
-    })
-  }
-
-  render() {
-    return (
-      <ThemeProvider theme={theme}>
-        <Router>
-        <Bar user={this.state.user} setUser={this.setUser}/>
-        <div className="App">
-          <div className="app-body">
-              <Switch>
-                <Route exact path="/">
-                  <ClassSearch user={this.state.user} courses={this.state.courses} setUser={this.setUser} setCourses={this.setCourses} />
-                </Route>
-                <Route exact path="/login">
-                  <Login user={this.state.user} setUser={this.setUser} setCourses={this.setCourses}/>
-                </Route>
-                <Route render={() => <Redirect to={{pathname: "/"}} />} />
-              </Switch>
-          </div>
+  return (
+    <ThemeProvider theme={theme}>
+      <Router>
+      <Bar user={user} setUser={setUser} setCoursesTaken={setCoursesTaken}/>
+      <div className="App">
+        <div className="app-body">
+            <Switch>
+              <Route exact path="/">
+                <ClassSearch user={user} classes={classes} setUser={setUser} setClasses={setClasses} />
+              </Route>
+              <Route exact path="/login">
+                <Login user={user} setUser={setUser} setCoursesTaken={setCoursesTaken}/>
+              </Route>
+              <Route exact path="/courseHistory">
+              </Route>
+              <Route render={() => <Redirect to={{pathname: "/"}} />} />
+            </Switch>
         </div>
-        </Router>
-      </ThemeProvider>
-    );
-  }
+      </div>
+      </Router>
+    </ThemeProvider>
+  );
 }
 
 export default App;

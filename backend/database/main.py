@@ -40,6 +40,7 @@ class Class(Resource):
       result = []
       for c in selected_classes:
         class_info = {
+          'id': c['class_id'],
           'subject': c['subject'],
           'catalog_number': c['catalog_number'],
           'name': c['name'],

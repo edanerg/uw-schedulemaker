@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import Grid from '@material-ui/core/Grid';
 import 'date-fns';
 import DateFnsUtils from '@date-io/date-fns';
@@ -6,111 +6,89 @@ import {
   MuiPickersUtilsProvider,
   KeyboardTimePicker,
 } from '@material-ui/pickers';
-import { Select,
-         Chip,
-         MenuItem,
-         Input,
-         FormControl,
-         InputLabel,
+import { FormControl,
+         FormControlLabel,
+         Checkbox,
          Fab} from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 import serverURL from '../config';
 import axios from 'axios';
 
-const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
-const MenuProps = {
-    PaperProps: {
-      style: {
-        width: 135,
-      },
-    },
-};
+function TimeSelect(props) {
 
-class timeSelect extends Component {
+    const [selectedDays, setSelectedDays] = useState({M: false, T: false, W: false, Th: false, F: false});
+    const [startTime, setStartTime] = useState(null);
+    const [endTime, setEndTime] = useState(null);
 
-    state = {
-        selectedDays: [],
-        startTime: null,
-        endTime: null
+    const search = () => {
+        axios.get(`${serverURL}/class`, {params: 
+            {weekdays: Object.keys(selectedDays).filter(k => selectedDays[k]).join(""),
+            from_time: startTime ? startTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', hour12: false}) : undefined,
+            to_time: endTime ? endTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', hour12: false}) : undefined}})
+            .then(res => props.setClasses(res.data.classes));
     }
 
-    startTimeChange = time => {
-        this.setState({
-            startTime: time
-        })
-    }
-
-    endTimeChange = time => {
-        this.setState({
-            endTime: time
-        })
-    }
-
-    selectedDaysChange = event => {
-        this.setState({
-            selectedDays: event.target.value
-        })
-    }
-
-    search = () => {
-        axios.post(`${serverURL}/courses`,{...this.state})
-        .then(res => this.props.setCourses(res));
-    }
-
-    render() {
-        return (
-            <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                <Grid container justify="space-around" alignItems="center">
-                    <FormControl style={{marginTop: "16px", marginBottom: "8px"}}>
-                        <InputLabel id="day-picker">Day</InputLabel>
-                        <Select style={{width: "250px", height: "32px"}}
-                            labelId="day-picker"
-                            id="day-picker"
-                            multiple
-                            value={this.state.selectedDays}
-                            onChange={this.selectedDaysChange}
-                            input={<Input id="day-select" />}
-                            renderValue={selected => (
-                                <div style={{display: 'flex', flexWrap: 'wrap', width: "250px"}}>
-                                {selected.map(value => (
-                                    <Chip key={value} label={value.substring(0, 2)} style={{margin: 1, fontSize: "14px"}} />
-                                ))}
-                                </div>
-                            )}
-                            MenuProps={MenuProps}
-                            >
-                            {days.map(day => (
-                                <MenuItem key={day} value={day}>
-                                {day}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-                    <KeyboardTimePicker
-                        margin="normal"
-                        id="start-time-picker"
-                        label="Start Time"
-                        value={this.state.startTime}
-                        onChange={this.startTimeChange}
-                        KeyboardButtonProps={{
-                            'aria-label': 'start time',
-                        }}
+    return (
+        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+            <Grid container justify="space-around" alignItems="center">
+                <FormControl style={{marginTop: "30px", display: 'flex', flexDirection: 'row'}}>
+                    <FormControlLabel
+                    value="M"
+                    control={<Checkbox color="primary" size="small" onChange={e => setSelectedDays({...selectedDays, M:e.target.checked})}/>}
+                    label="M"
+                    labelPlacement="bottom"
                     />
-                    <KeyboardTimePicker
-                        margin="normal"
-                        id="end-time-picker"
-                        label="End Time"
-                        value={this.state.endTime}
-                        onChange={this.endTimeChange}
-                        KeyboardButtonProps={{
-                            'aria-label': 'end time',
-                        }}
+                    <FormControlLabel
+                    value="T"
+                    control={<Checkbox color="primary" size="small" onChange={e => setSelectedDays({...selectedDays, T:e.target.checked})}/>}
+                    label="T"
+                    labelPlacement="bottom"
                     />
-                    <Fab color="primary" size="small" style={{marginTop: "20px"}} onClick={this.search}><SearchIcon /></Fab>
-                </Grid>
-            </MuiPickersUtilsProvider>
-        )
-    }
+                    <FormControlLabel
+                    value="W"
+                    control={<Checkbox color="primary" size="small" onChange={e => setSelectedDays({...selectedDays, W:e.target.checked})}/>}
+                    label="W"
+                    labelPlacement="bottom"
+                    />
+                    <FormControlLabel
+                    value="Th"
+                    control={<Checkbox color="primary" size="small" onChange={e => setSelectedDays({...selectedDays, Th:e.target.checked})}/>}
+                    label="Th"
+                    labelPlacement="bottom"
+                    />
+                    <FormControlLabel
+                    value="F"
+                    control={<Checkbox color="primary" size="small" onChange={e => setSelectedDays({...selectedDays, F:e.target.checked})}/>}
+                    label="F"
+                    labelPlacement="bottom"
+                    />
+                </FormControl>
+                <KeyboardTimePicker
+                    margin="normal"
+                    id="start-time-picker"
+                    label="Start Time"
+                    value={startTime}
+                    onChange={setStartTime}
+                    KeyboardButtonProps={{
+                        'aria-label': 'start time',
+                    }}
+                    style={{width: "180px"}}
+                />
+                <KeyboardTimePicker
+                    margin="normal"
+                    id="end-time-picker"
+                    label="End Time"
+                    value={endTime}
+                    onChange={setEndTime}
+                    KeyboardButtonProps={{
+                        'aria-label': 'end time',
+                    }}
+                    style={{width: "180px"}}
+                />
+                <Fab color="primary" size="small" style={{marginTop: "20px"}} onClick={search}><SearchIcon /></Fab>
+            </Grid>
+        </MuiPickersUtilsProvider>
+    )
 }
 
-export default timeSelect;
+export default TimeSelect;
