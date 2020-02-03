@@ -3,7 +3,7 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 
-function ClassList(props) {
+function ClassList({ classes } : props) {
     const [hoveredClassId, setHoveredClassId] = useState(null)
 
     const mouseEnter = id => {
@@ -16,7 +16,7 @@ function ClassList(props) {
 
     return (
         <div>
-            {(props.classes || []).map(c => 
+            {(classes || []).map(c => 
                 <Card key={c.id} style={{marginBottom: "10px", cursor: "pointer"}} raised={hoveredClassId === c.id}
                     onMouseEnter={() => mouseEnter(c.id)}
                     onMouseLeave={mouseExit}>
