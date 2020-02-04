@@ -15,9 +15,9 @@ INSERT INTO Instructor
 VALUES (1, 'He,Xi');
 
 -- TTh 10-11:30
-INSERT INTO Class (id, course_id, units, class_number, class_type, section_number, campus, associated_class, 
+INSERT INTO Class (id, subject, catalog_number, units, class_number, class_type, section_number, campus, associated_class, 
     related_component_1, enrollment_capacity, enrollment_total, term, academic_level)
-VALUES (111, 004417, 0.5, 5794, 'LEC', 001, 'UW U', 1, 101, 70, 68, 1201, 'undergraduate');
+VALUES (111, 'CS', '348', 0.5, 5794, 'LEC', 001, 'UW U', 1, 101, 70, 68, 1201, 'undergraduate');
 
 INSERT INTO ClassTime (id, class_id, start_time, end_time, weekdays, is_active, building, room)
 VALUES (999, 111, '10:00:00', '11:20:00', 'TTh', TRUE, 'RCH', '207');
@@ -26,9 +26,9 @@ INSERT INTO InstructorClassTime
 VALUES (1, 999);
 
 -- TTh 1-2:30
-INSERT INTO Class (id, course_id, units, class_number, class_type, section_number, campus, associated_class, 
+INSERT INTO Class (id, subject, catalog_number, units, class_number, class_type, section_number, campus, associated_class, 
     related_component_1, enrollment_capacity, enrollment_total, term, academic_level)
-VALUES (222, 004417, 0.5, 6354, 'LEC', 002, 'UW U', 2, 101, 70, 67, 1201, 'undergraduate');
+VALUES (222, 'CS', '436', 0.5, 6354, 'LEC', 002, 'UW U', 2, 101, 70, 67, 1201, 'undergraduate');
 
 INSERT INTO ClassTime (id, class_id, start_time, end_time, weekdays, is_active, building, room)
 VALUES (1010, 222, '13:00:00', '14:20:00', 'TTh', TRUE, 'MC', '4040');

@@ -30,7 +30,7 @@ class Class(Resource):
     with db.connect() as conn:
       selected_classes = conn.execute(
         "SELECT * FROM Classtime LEFT JOIN "
-        "(SELECT Class.id AS class_id, * FROM Class LEFT JOIN Course ON Course.id = Class.course_id) "
+        "(SELECT Class.id AS class_id, * FROM Class LEFT JOIN Course ON Course.subject = Class.subject AND Course.catalog_number = Class.catalog_number) "
         "AS CourseAndClass "
         "ON CourseAndClass.class_id = ClassTime.class_id "
         f"WHERE weekdays LIKE '%{weekdays}%' "

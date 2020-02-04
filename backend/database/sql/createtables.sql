@@ -28,7 +28,8 @@ CREATE TABLE IF NOT EXISTS Instructor (
 -- * held_with
 CREATE TABLE IF NOT EXISTS Class (
     id SERIAL NOT NULL PRIMARY KEY,
-    course_id INTEGER NOT NULL REFERENCES Course(id) ON DELETE CASCADE,
+    subject VARCHAR(10) NOT NULL,
+    catalog_number VARCHAR(10) NOT NULL,
     units FLOAT NOT NULL CHECK (units >= 0),
     note VARCHAR(100),  -- sometimes the note will specify to choose a TUT
     class_number INTEGER NOT NULL UNIQUE,
@@ -45,7 +46,8 @@ CREATE TABLE IF NOT EXISTS Class (
     topic VARCHAR(10),
     held_with VARCHAR(10), -- comma separated course names (see CLAS 221)
     term INTEGER NOT NULL,
-    academic_level VARCHAR(20)
+    academic_level VARCHAR(20),
+    FOREIGN KEY (subject, catalog_number) REFERENCES Course(subject, catalog_number) ON DELETE CASCADE
 );
 
 -- Class Time --
@@ -88,8 +90,10 @@ CREATE TABLE IF NOT EXISTS AppUser (
 
 CREATE TABLE IF NOT EXISTS CoursesTaken (
     username VARCHAR(30) NOT NULL REFERENCES AppUser(username),
-    course_id INTEGER NOT NULL REFERENCES Course(id),
-    PRIMARY KEY (username, course_id)
+    subject VARCHAR(10) NOT NULL,
+    catalog_number VARCHAR(10) NOT NULL,
+    FOREIGN KEY (subject, catalog_number) REFERENCES Course(subject, catalog_number) ON DELETE CASCADE,
+    PRIMARY KEY (username, subject, catalog_number)
 );
 
 -- Theres some issue with the syntax for this one:
