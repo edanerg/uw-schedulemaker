@@ -63,19 +63,22 @@ class Class(Resource):
 class Courses(Resource):
   """
     '/courses' route
-    GET: returns list of all the courses from SQL database
-    POST: todo, can grab specific course
+    GET: returns list of all the courses from SQL database (and can search)
   """
-  @use_args({"subject": fields.Str(required=False), "catalog": fields.Str(required=False)})
+  @use_args({
+    "subject": fields.Str(required=False),
+    "catalog": fields.Str(required=False)
+  })
   def get(self, args):
     subject = args.get("subject", '')
-    catalog = args.get("catalog_number", '')
-
+    catalog = args.get("catalog", '').strip()
+    sql_command = "SELECT * FROM Course"
+    if subject != '':
+      sql_command += f" WHERE subject = '{subject}'"
+    if catalog != '':
+      sql_command += f" AND catalog_number LIKE '{catalog}'" if subject != '' else f" WHERE catalog_number LIKE '{catalog}%'"
     with db.connect() as conn:
-      all_courses = conn.execute(
-        "SELECT * FROM Course "
-        f"WHERE subject LIKE '{subject}' AND catalog_number LIKE '%{catalog}%'"
-      )
+      all_courses = conn.execute(sql_command)
       result = []
       for course in all_courses:
         course_info = {

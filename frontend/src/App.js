@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ClassSearch from './components/classSearch';
+import CoursesSearch from './components/coursesSearch';
 import Bar from './components/bar';
 import Login from './components/login';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
@@ -26,6 +27,7 @@ function App(){
   const [coursesTaken, setCoursesTaken] = useState([]);
   const [user, setUser] = useState(null);
   const [classes, setClasses] = useState([]);
+  const [courses, setCourses] = useState([]);
 
 
   useEffect(() => {
@@ -33,6 +35,12 @@ function App(){
       console.log(res.data.classes);
       setClasses(res.data.classes);
     })
+  }, []);
+
+  useEffect(() => {
+    axios.get(`${serverURL}/courses`).then(res => {
+      setCourses(res.data.courses);
+    });
   }, []);
 
   return (
@@ -49,6 +57,9 @@ function App(){
                 <Login user={user} setUser={setUser} setCoursesTaken={setCoursesTaken}/>
               </Route>
               <Route exact path="/courseHistory">
+              </Route>
+              <Route exact path="/courses">
+                <CoursesSearch courses={courses} setCourses={setCourses} />
               </Route>
               <Route render={() => <Redirect to={{pathname: "/"}} />} />
             </Switch>

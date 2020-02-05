@@ -16,7 +16,8 @@
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-router-dom": "^5.1.2",
-    "react-scripts": "3.2.0"
+    "react-scripts": "3.2.0",
+    "react-select": "^3.0.8"
   },
   "scripts": {
     "start": "REACT_APP_SERVER_URL=https://cs348-database10.appspot.com react-scripts start",
