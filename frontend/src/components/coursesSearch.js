@@ -50,7 +50,7 @@ const subjects = [ { value: '', label: 'None' },
     { value: 'WKRPT', label: 'WKRPT' }, { value: 'WS', label: 'WS' },
 ];
 
-function CoursesSearch(props) {
+function CoursesSearch({ courses }: props) {
     const [subject, setSubject] = useState(null);
     const [catalog, setCatalog] = useState(null);
 
@@ -73,7 +73,7 @@ function CoursesSearch(props) {
             <div style={{display: "inline-block"}}>
                 <TextField type="text" name="catalog" placeholder="Course code" onChange={text => setCatalog(text.target.value)}/>
             </div>
-            <CoursesList courses={props.courses}/>
+            <CoursesList courses={courses}/>
         </div>
     )
 }

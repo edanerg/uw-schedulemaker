@@ -3,13 +3,13 @@ import ClassList from './classList';
 import TimeSelect from './timeSelect';
 
 
-function ClassSearch(props) {
+function ClassSearch({ classes, setClasses }: props) {
     return (
         <div>
             <div style={{marginBottom: "20px"}}>
-                <TimeSelect setClasses={props.setClasses}/>
+                <TimeSelect setClasses={setClasses}/>
             </div>
-            <ClassList classes={props.classes}/>
+            <ClassList classes={classes}/>
         </div>
     )
 }

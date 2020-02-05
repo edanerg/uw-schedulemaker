@@ -10,7 +10,7 @@ import axios from 'axios';
 import serverURL from '../config';
 import { useHistory } from "react-router-dom";
 
-function Login(props) {
+function Login({ setUser, setCoursesTaken, }: props) {
     const [action, setAction] = useState("Log In");
     const [username, setUsername] = useState(null);
     const [usernameInvalid, setUsernameInvalid] = useState(false);
@@ -18,7 +18,7 @@ function Login(props) {
     const history = useHistory();
 
     const onToggleAction = () => {
-        if (this.state.action === "Log In") {
+        if (action === "Log In") {
             setAction("Sign Up");
         } else {
             setAction("Log In");
@@ -34,11 +34,11 @@ function Login(props) {
             .then(res => {
                 const newUser = res.data.user;
                 if (newUser) {
-                    props.setUser(res.data.user);
+                    setUser(res.data.user);
                     axios.get(`${serverURL}/coursesTaken`, {params: {username}})
                     .then(res => {
                         console.log(res);
-                        props.setCoursesTaken(res.data.courses);
+                        setCoursesTaken(res.data.courses);
                         history.push('/');
                     })
                 } else {

@@ -15,7 +15,7 @@ import serverURL from '../config';
 import axios from 'axios';
 
 const defaultSelectedDays = {M: false, T: false, W: false, Th: false, F: false};
-function TimeSelect({ setClasses } : props) {
+function TimeSelect({ setClasses }: props) {
 
     const [selectedDays, setSelectedDays] = useState(defaultSelectedDays);
     const [startTime, setStartTime] = useState(null);

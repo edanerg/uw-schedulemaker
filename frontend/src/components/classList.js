@@ -3,7 +3,7 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 
-function ClassList({ classes } : props) {
+function ClassList({ classes }: props) {
     const [hoveredClassId, setHoveredClassId] = useState(null)
 
     const mouseEnter = id => {
