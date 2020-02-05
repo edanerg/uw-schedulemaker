@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS Course (
     subject VARCHAR(10) NOT NULL,
     catalog_number VARCHAR(10) NOT NULL,
     name VARCHAR(100) NOT NULL,
-    description VARCHAR(1000),
+    description VARCHAR(8000),
     PRIMARY KEY (subject, catalog_number)
 );
 
@@ -98,5 +98,5 @@ CREATE TABLE IF NOT EXISTS CoursesTaken (
 
 -- Theres some issue with the syntax for this one:
 -- Will likely be searching by class_id
-CREATE INDEX reserve_class_id
+CREATE INDEX IF NOT EXISTS reserve_class_id
 ON Reserve(class_id);
