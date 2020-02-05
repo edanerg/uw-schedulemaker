@@ -50,14 +50,14 @@ const subjects = [ { value: '', label: 'None' },
     { value: 'WKRPT', label: 'WKRPT' }, { value: 'WS', label: 'WS' },
 ];
 
-function CoursesSearch({ courses }: props) {
+function CoursesSearch({ courses, setCourses }: props) {
     const [subject, setSubject] = useState(null);
     const [catalog, setCatalog] = useState(null);
 
     useEffect(() => {
         axios.get(`${serverURL}/courses`, {params: 
           {subject: subject, catalog: catalog}})
-          .then(res => props.setCourses(res.data.courses));
+          .then(res => setCourses(res.data.courses));
       }, [subject, catalog]);
 
     return (
