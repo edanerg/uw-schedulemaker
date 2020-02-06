@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS Instructor (
 -- * section_number
 -- * held_with
 CREATE TABLE IF NOT EXISTS Class (
-    id SERIAL NOT NULL PRIMARY KEY,
+    id VARCHAR(100) NOT NULL PRIMARY KEY,
     subject VARCHAR(10) NOT NULL,
     catalog_number VARCHAR(10) NOT NULL,
     units FLOAT NOT NULL CHECK (units >= 0),
@@ -53,13 +53,13 @@ CREATE TABLE IF NOT EXISTS Class (
 -- Class Time --
 -- Some classes have multiple locations. For example, MATH 135 has one class MWF and one class T in different rooms
 CREATE TABLE IF NOT EXISTS ClassTime (
-    id SERIAL NOT NULL PRIMARY KEY,
-    class_id INTEGER NOT NULL REFERENCES Class(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    id VARCHAR(100) NOT NULL PRIMARY KEY,
+    class_id VARCHAR(100) NOT NULL REFERENCES Class(id) ON DELETE CASCADE ON UPDATE CASCADE,
     start_time TIME NOT NULL, -- format: 'hh:mm:ss', stored in 24-hour EST
     end_time TIME NOT NULL,
     weekdays VARCHAR(10) NOT NULL, -- M,T,W,Th,F,Sa,Su
-    start_date DATE,
-    end_date DATE,
+    start_date DATE DEFAULT NULL,
+    end_date DATE DEFAULT NULL,
     is_active BOOLEAN NOT NULL DEFAULT TRUE, -- true if is_tba, is_cancelled, and is_closed are all false
     building VARCHAR(10) NOT NULL,
     room VARCHAR(10) NOT NULL
@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS ClassTime (
 -- Connects an instructor to a class time (since a class time can apparently be taught by multiple instructors)
 CREATE TABLE IF NOT EXISTS InstructorClassTime(
     instructor_id INTEGER NOT NULL REFERENCES Instructor(id) ON DELETE CASCADE,
-    class_time_id INTEGER NOT NULL REFERENCES ClassTime(id) ON DELETE CASCADE,
+    class_time_id VARCHAR(100) NOT NULL REFERENCES ClassTime(id) ON DELETE CASCADE,
     PRIMARY KEY(instructor_id, class_time_id)
 );
 
@@ -76,7 +76,7 @@ CREATE TABLE IF NOT EXISTS InstructorClassTime(
 -- Multiple reserves can be associated with one class
 CREATE TABLE IF NOT EXISTS Reserve (
     id SERIAL NOT NULL PRIMARY KEY, -- not sure if needed
-    class_id INTEGER NOT NULL REFERENCES Class(id) ON DELETE CASCADE,
+    class_id VARCHAR(100) NOT NULL REFERENCES Class(id) ON DELETE CASCADE,
     reserve_group_name VARCHAR(15) NOT NULL,
     enrollment_capacity INTEGER NOT NULL CHECK(enrollment_capacity >= 0),
     enrollment_total INTEGER NOT NULL CHECK(enrollment_total >= 0)
