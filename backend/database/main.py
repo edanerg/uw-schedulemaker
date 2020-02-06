@@ -60,7 +60,7 @@ class Class(Resource):
         result.append(class_info)
       conn.close()
 
-      return {'classes': result}
+      return {'classes': result }
 
 
 class Courses(Resource):
@@ -81,7 +81,7 @@ class Courses(Resource):
       all_courses = conn.execute(sql_command)
       result = [dict(row) for row in all_courses]
       print(result)
-    return {'courses': 'result' }
+    return {'courses': result }
 
 
 class User(Resource):

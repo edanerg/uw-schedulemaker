@@ -60,7 +60,7 @@ function CoursesSearch({ courses, setCourses }: props) {
       axios.get(`${serverURL}/courses`, {params: 
         {subject: subject, catalog: catalog}})
         .then(res => setCourses(res.data.courses));
-    }, [subject, catalog]);
+    }, [subject, catalog, setCourses]);
 
     return (
         <div>

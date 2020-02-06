@@ -17,7 +17,7 @@ function CoursesList({ courses } : props) {
     return (
         <div>
             {courses.length ?
-            (courses).map(c => {
+              courses.map(c => {
               const key = `${c.subject}${c.catalog_number}`
               return (
                 <Card key={key} style={{marginBottom: "10px", cursor: "pointer"}} raised={hoveredClassId === key}
