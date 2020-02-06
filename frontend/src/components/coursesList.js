@@ -16,9 +16,12 @@ function CoursesList({ courses } : props) {
 
     return (
         <div>
-            {(courses || []).map(c => 
-                <Card key={c.id} style={{marginBottom: "10px", cursor: "pointer"}} raised={hoveredClassId === c.id}
-                    onMouseEnter={() => mouseEnter(c.id)}
+            {courses.length ?
+            (courses).map(c => {
+              const key = `${c.subject}${c.catalog_number}`
+              return (
+                <Card key={key} style={{marginBottom: "10px", cursor: "pointer"}} raised={hoveredClassId === key}
+                    onMouseEnter={() => mouseEnter(key)}
                     onMouseLeave={mouseExit}>
                     <CardContent>
                         <Typography variant="h5" color="textPrimary">
@@ -29,7 +32,13 @@ function CoursesList({ courses } : props) {
                         </Typography>
                     </CardContent>
                 </Card>
-            )}
+              )
+            })
+            : 
+            <Typography variant="h5" color="textPrimary">
+              No Courses found 
+            </Typography>
+          }
         </div>
     )
 }

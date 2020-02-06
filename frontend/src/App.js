@@ -32,15 +32,8 @@ function App(){
 
   useEffect(() => {
     axios.get(`${serverURL}/class`).then(res => {
-      console.log(res.data.classes);
       setClasses(res.data.classes);
     })
-  }, []);
-
-  useEffect(() => {
-    axios.get(`${serverURL}/courses`).then(res => {
-      setCourses(res.data.courses);
-    });
   }, []);
 
   return (

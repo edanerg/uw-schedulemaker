@@ -6,7 +6,7 @@ import sqlalchemy
 server_env = os.getenv('SERVER_ENV', 'development')
 
 
-db = sqlalchemy.create_engine("postgresql+pg8000://root:tmp@localhost:5432/schedulemaker")
+db = sqlalchemy.create_engine("postgresql+pg8000://ana_wan:sulfura10@localhost:5432/schedulemaker")
 
 if (server_env != 'development'):
 

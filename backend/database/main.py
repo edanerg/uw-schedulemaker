@@ -11,21 +11,15 @@ app = Flask(__name__)
 api = Api(app)
 CORS(app)
 
-
 class Class(Resource):
   """
     '/class?from_time=<time>&to_time=<time>&weekdays=<day>' route
     GET: returns list of classes within the specified time range and weekday
   """
-  @use_args({
-    "from_time": fields.Str(required=False),
-    "to_time": fields.Str(required=False),
-    "weekdays": fields.Str(required=False),
-  })
-  def get(self, args):
-    from_time = args.get("from_time", '00:00:00')
-    to_time = args.get("to_time", '23:59:59')
-    weekdays = args.get("weekdays", '')
+  def get(self):
+    from_time = request.args.get('from_time') or '00:00:00'
+    to_time = request.args.get('to_time') or '23:59:59'
+    weekdays = request.args.get('weekdays') or ''
 
     with db.connect() as conn:
       selected_classes = conn.execute(
@@ -36,28 +30,37 @@ class Class(Resource):
         f"WHERE weekdays LIKE '%{weekdays}%' "
         f"AND start_time >= '{from_time}' AND end_time <= '{to_time}'"
       )
-
+      
+      # Need better way for this
       result = []
-      for c in selected_classes:
+      for selected_class in selected_classes:
         class_info = {
-          'id': c['class_id'],
-          'subject': c['subject'],
-          'catalog_number': c['catalog_number'],
-          'name': c['name'],
-          'building': c['building'],
-          'room': c['room'],
-          'weekdays': c['weekdays'],
-          'start_time': c['start_time'].strftime('%H:%M'),
-          'end_time': c['end_time'].strftime('%H:%M'),
-          'enrollment_capacity': c['enrollment_capacity'],
-          'enrollment_total': c['enrollment_total'],
-          'waiting_capacity': c['waiting_capacity'],
-          'waiting_total': c['waiting_total'],
+          'id': selected_class['class_id'],
+          'start_time': selected_class['start_time'].strftime("%H:%M:%S"),
+          'end_time': selected_class['end_time'].strftime("%H:%M:%S"),
+          'weekdays': selected_class['weekdays'],
+          'is_active': selected_class['is_active'],
+          'building': selected_class['building'],
+          'room': selected_class['room'],
+          'subject': selected_class['subject'],
+          'catalog_number': selected_class['catalog_number'],
+          'units': selected_class['units'],
+          'note': selected_class['note'],
+          'class_number': selected_class['class_number'],
+          'class_type': selected_class['class_type'],
+          'section_number': selected_class['section_number'],
+          'description': selected_class['description'],
+          'name': selected_class['name'],
+          'description': selected_class['description'],
+          'enrollment_capacity': selected_class['enrollment_capacity'],
+          'enrollment_total': selected_class['enrollment_total'],
+          'waiting_capacity': selected_class['waiting_capacity'],
+          'waiting_total': selected_class['waiting_total'],
         }
         result.append(class_info)
-      print(result)
+      conn.close()
 
-      return {"classes": result}
+      return {'classes': result}
 
 
 class Courses(Resource):
@@ -65,13 +68,10 @@ class Courses(Resource):
     '/courses' route
     GET: returns list of all the courses from SQL database (and can search)
   """
-  @use_args({
-    "subject": fields.Str(required=False),
-    "catalog": fields.Str(required=False)
-  })
-  def get(self, args):
-    subject = args.get("subject", '')
-    catalog = args.get("catalog", '').strip()
+  def get(self):
+    subject = request.args.get('subject') or ''
+    catalog = request.args.get('catalog') or ''
+
     sql_command = "SELECT * FROM Course"
     if subject != '':
       sql_command += f" WHERE subject = '{subject}'"
@@ -79,17 +79,9 @@ class Courses(Resource):
       sql_command += f" AND catalog_number LIKE '{catalog}'" if subject != '' else f" WHERE catalog_number LIKE '{catalog}%'"
     with db.connect() as conn:
       all_courses = conn.execute(sql_command)
-      result = [dict(row) for row in all_courses_from_table]
-      return {'courses': result}
-
-
-class Main(Resource):
-  """
-    this is a test function
-    returns msg on '/' route
-  """
-  def get(self):
-      return "Hi there!"
+      result = [dict(row) for row in all_courses]
+      print(result)
+    return {'courses': 'result' }
 
 
 class User(Resource):
@@ -147,7 +139,14 @@ class CoursesTaken(Resource):
       return {'result': 'success'}
 
 
-# TODO: add more routes
+class Main(Resource):
+  """
+    this is a test function
+    returns msg on '/' route
+  """
+  def get(self):
+      return "Hi there!"
+
 api.add_resource(Main, '/')
 api.add_resource(Courses, '/courses')
 api.add_resource(User, '/user')

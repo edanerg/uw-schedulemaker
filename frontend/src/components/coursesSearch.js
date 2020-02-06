@@ -5,7 +5,7 @@ import CoursesList from './coursesList';
 import serverURL from '../config';
 import axios from 'axios';
 
-const subjects = [ { value: '', label: 'None' },
+const subjects = [
     { value: 'ACC', label: 'ACC' }, { value: 'ACINTY', label: 'ACINTY' }, { value: 'ACTSCAE', label: 'ACTSCAE' }, { value: 'AFM', label: 'AFM' },
     { value: 'AHS', label: 'AHS' }, { value: 'AMATH', label: 'AMATH' }, { value: 'ANTH', label: 'ANTH' }, { value: 'APPLS', label: 'APPLS' },
     { value: 'ARBUS', label: 'ARBUS' }, { value: 'ARCH', label: 'ARCH' }, { value: 'ARCHL', label: 'ARCHL' }, { value: 'ARTS', label: 'ARTS' },
@@ -50,25 +50,28 @@ const subjects = [ { value: '', label: 'None' },
     { value: 'WKRPT', label: 'WKRPT' }, { value: 'WS', label: 'WS' },
 ];
 
+const defaultCourse = 'ACC';
+
 function CoursesSearch({ courses, setCourses }: props) {
-    const [subject, setSubject] = useState(null);
+    const [subject, setSubject] = useState(defaultCourse);
     const [catalog, setCatalog] = useState(null);
 
     useEffect(() => {
-        axios.get(`${serverURL}/courses`, {params: 
-          {subject: subject, catalog: catalog}})
-          .then(res => setCourses(res.data.courses));
-      }, [subject, catalog]);
+      axios.get(`${serverURL}/courses`, {params: 
+        {subject: subject, catalog: catalog}})
+        .then(res => setCourses(res.data.courses));
+    }, [subject, catalog]);
 
     return (
         <div>
             <div style={{width: '200px', display: "inline-block", marginRight: '100px'}}>
-                <Select
-                    options={subjects}
-                    onChange={option => setSubject(option != null ? option.value : null)}
-                    isSearchable={true}
-                    isClearable={true}
-                    placeholder="Select a subject"/>
+              <Select
+                options={subjects}
+                onChange={option => setSubject(option != null ? option.value : null)}
+                isSearchable={true}
+                isClearable={true}
+                placeholder={subject}
+                />
             </div>
             <div style={{display: "inline-block"}}>
                 <TextField type="text" name="catalog" placeholder="Course code" onChange={text => setCatalog(text.target.value)}/>
