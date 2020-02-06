@@ -39,9 +39,12 @@ postgres=# `CREATE DATABASE schedulemaker`
 ### You can try this:
 python3 ./database/scripts/execute_sql.py -f createtables -u yourUsername -p yourPassword
 
+### To Populate all data into local database:
+python3 ./database/scripts/populate_tables.py -u yourUsername -p yourPassword
 
-#### To Populate data into local database:
+### To Populate specific table into local database:
 python3 ./database/scripts/populate_tables.py -t 'table_you_want_to_populate' -u yourUsername -p yourPassword
+
 
 ### For connecting to production database:
 Download cloud_sql_proxy in your root folder and execute:

@@ -48,15 +48,11 @@ def populate_classes_classtime(db):
     } for row in all_courses_from_table]
 
   print("Grabing schedule for each course from waterloo api, will take a longggg time")
-  index = 0;
   courses_schedule = []
   for course in courses:
     schedule = get_course_schedule(course['subject'], course['catalog_number'])
     if schedule:
       courses_schedule += schedule
-    if index == 9:
-      break
-    index += 1
   
   print("Sucessfully obtained all data, now populating tables")
   with db.connect() as conn:
