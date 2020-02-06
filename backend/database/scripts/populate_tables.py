@@ -4,12 +4,13 @@ import argparse
 from sys import argv
 from util_get_waterloo_data import get_all_courses, get_course, get_course_schedule
 
-def populate_courses(courses, db): 
+def populate_courses(db): 
   """
     Populates Courses tables
     Grabs all courses at /courses
     Grabs Course description at /course/{course_id}
   """
+  courses = get_all_courses()
   with db.connect() as conn:
     for course in courses:
       course_id = course['course_id']
@@ -33,12 +34,20 @@ def populate_courses(courses, db):
     print("All Courses are now added")
 
 
-def populate_classes_classtime(courses, db):
+def populate_classes_classtime(db):
   """
     Populates Classes and Classtime tables
     Grabs the schedules for each course at /courses/{subject}/{catalog_number}
   """
-  print("Grabing courses from waterloo api, will take a long time")
+  # Get all existing courses in the Course table
+  with db.connect() as conn:
+    all_courses_from_table = conn.execute("SELECT * FROM Course")
+    courses = [{
+        'subject': dict(row)['subject'],
+        'catalog_number': dict(row)['catalog_number']
+    } for row in all_courses_from_table]
+
+  print("Grabing schedule for each course from waterloo api, will take a longggg time")
   index = 0;
   courses_schedule = []
   for course in courses:
@@ -50,7 +59,6 @@ def populate_classes_classtime(courses, db):
     index += 1
   
   print("Sucessfully obtained all data, now populating tables")
-    
   with db.connect() as conn:
     # Not sure if have to check if values in the api data is null
     for schedule in courses_schedule:
@@ -143,18 +151,17 @@ if __name__ == '__main__':
   table = arguments.table
 
   if table == "Course":
-    courses = get_all_courses()
-    populate_courses(courses, db)
+    populate_courses(db)
   elif table == "Class":
-    # Get all existing courses in the Course table
-    with db.connect() as conn:
-      all_courses_from_table = conn.execute("SELECT * FROM Course")
-      courses = [{
-        'subject': dict(row)['subject'],
-        'catalog_number': dict(row)['catalog_number']
-      } for row in all_courses_from_table]
-    populate_classes_classtime(courses, db)
+    print("Will populate Class table according to the courses in Course table")
+    populate_classes_classtime(db)
   elif table == "ClassTime":
     print("Classtime table will be populated when Class table gets populated")
+  else:
+    populate_courses(db)
+    populate_classes_classtime(db)
+    print("If error occurs, there are probably values in the table already" \
+          ", execute purgetables and try again")
+
 
 
