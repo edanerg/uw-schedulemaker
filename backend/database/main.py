@@ -76,7 +76,7 @@ class Courses(Resource):
     if subject != '':
       sql_command += f" WHERE subject = '{subject}'"
     if catalog != '':
-      sql_command += f" AND catalog_number LIKE '{catalog}'" if subject != '' else f" WHERE catalog_number LIKE '{catalog}%'"
+      sql_command += f" AND catalog_number LIKE '{catalog}%'" if subject != '' else f" WHERE catalog_number LIKE '{catalog}%'"
     with db.connect() as conn:
       all_courses = conn.execute(sql_command)
       result = [dict(row) for row in all_courses]
