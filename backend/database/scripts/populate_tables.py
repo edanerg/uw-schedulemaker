@@ -27,17 +27,18 @@ def populate_courses(db):
       else:
         course_description = "NULL"
 
-      command = f"INSERT INTO Course VALUES ('{course_id}', '{subject}', '{catalog_number}', " \
-          f"'{name}', '{course_description}') "
+      command = (
+        f"INSERT INTO Course VALUES ('{course_id}', '{subject}', '{catalog_number}', "
+        f"'{name}', '{course_description}') "
+      )
       conn.execute(command)
 
     print("All Courses are now added")
 
 
-def populate_classes_classtime(db):
+def populate_class(db):
   """
-    Populates Classes and Classtime tables
-    Grabs the schedules for each course at /courses/{subject}/{catalog_number}
+    Populates Class tables
   """
   # Get all existing courses in the Course table
   with db.connect() as conn:
@@ -81,11 +82,13 @@ def populate_classes_classtime(db):
       held_with = ','.join(schedule['held_with'])
       term = schedule['term']
       academic_level = schedule['academic_level']
-      class_id = f'{subject}-{catalog_number}-{class_type}-{section_number}'
 
       command = (
-        "INSERT INTO Class VALUES ( "
-        f"'{class_id}', '{subject}', '{catalog_number}', "
+        "INSERT INTO Class (subject, catalog_number, units, note, class_number, class_type, "
+        "section_number, campus, associated_class, related_component_1, related_component_2, "
+        "enrollment_capacity, enrollment_total, waiting_capacity , waiting_total, "
+        "topic, held_with, term, academic_level) VALUES ("
+        f"'{subject}', '{catalog_number}', "
         f"'{units}', '{note}', '{class_number}', "
         f"'{class_type}', '{section_number}', '{campus}', "
         f"'{associated_class}', '{related_component_1}', '{related_component_2}', "
@@ -95,39 +98,74 @@ def populate_classes_classtime(db):
       )
       conn.execute(command)
 
-      class_times = schedule['classes']
-      last_updated = schedule['last_updated']
-      current_year = last_updated.split('-')[0]
 
-      # Populates Classtime table
+def populate_classtime(db):
+  """
+    Populates Classtime tables
+    Grabs the schedules for each course at /courses/{subject}/{catalog_number}
+  """
+  # Get all existing courses in the Class table
+  db_classes = []
+  with db.connect() as conn:
+    all_db_classes = conn.execute("SELECT * FROM Class")
+    for row in all_db_classes:
+      db_classes.append({
+        'class_id': row['id'],
+        'subject': row['subject'],
+        'catalog_number': row['catalog_number']
+      })
+
+  # Get class schedule for all classes
+  all_classes = []
+  for db_class in db_classes:
+    all_schedules = get_course_schedule(db_class['subject'], db_class['catalog_number'])
+    for schedule in all_schedules:
+      # Grab only the 'classes' field in the api
+      classes = {}
+      if schedule:
+        classes['class_id'] = db_class['class_id']
+        classes['classes'] = schedule['classes']
+        classes['last_updated'] = schedule['last_updated']
+        all_classes.append(classes)
+
+  print(all_classes)
+
+  # Update to database
+  with db.connect() as conn:
+    for class_ in all_classes:
+      class_times = class_['classes']
+      current_year = class_['last_updated'].split('-')[0]
+      class_id = class_['class_id']
       for class_time in class_times:
         date = class_time['date']
-        building = class_time['location']['building']
-        room = class_time['location']['room']
-        start_time = date['start_time']
-        end_time = date['end_time']
-        weekdays = date['weekdays']
+        if date['weekdays']:
+          building = class_time['location']['building']
+          room = class_time['location']['room']
+          start_time = date['start_time']
+          end_time = date['end_time']
+          weekdays = date['weekdays']
 
-        # Not sure how to add null to datetime
-        default_date = '1900-01-01'
-        start_date = date['start_date'] or default_date
-        end_date = date['end_date'] or default_date
-        if start_date != default_date:
-          start_date = f"{current_year}-{start_date.replace('/', '-')}"
-        if end_date != default_date:
-          end_date = f"{current_year}-{end_date.replace('/', '-')}"
-        
-        is_active = not (date['is_tba'] and date['is_cancelled'] and date['is_closed'])
-        # can change this id
-        classtime_id = f'{building}-{room}-{start_date}-{start_time}-{weekdays}'
-        command = (
-          "INSERT INTO ClassTime VALUES ( "
-          f"'{classtime_id}', '{class_id}', '{start_time}', "
-          f"'{end_time}', '{weekdays}', '{start_date}', "
-          f"'{end_date}', '{is_active}', '{building}', "
-          f"'{room}'); "
-        )
-        conn.execute(command)
+          # Not sure how to add null to datetime
+          default_date = '1900-01-01'
+          start_date = date['start_date'] or default_date
+          end_date = date['end_date'] or default_date
+          if start_date != default_date:
+            start_date = f"{current_year}-{start_date.replace('/', '-')}"
+          if end_date != default_date:
+            end_date = f"{current_year}-{end_date.replace('/', '-')}"
+
+          is_active = not (date['is_tba'] and date['is_cancelled'] and date['is_closed'])
+          # can change this id
+          classtime_id = f'{building}-{room}-{start_date}-{start_time}-{weekdays}'
+          command = (
+            "INSERT INTO ClassTime (class_id, start_time, end_time, weekdays,"
+            "start_date, end_date, is_active, building, room) VALUES ( "
+            f"'{class_id}', '{start_time}', "
+            f"'{end_time}', '{weekdays}', '{start_date}', "
+            f"'{end_date}', '{is_active}', '{building}', "
+            f"'{room}'); "
+          )
+          conn.execute(command)
 
   print("Sucessfully added all data")
 
@@ -150,12 +188,14 @@ if __name__ == '__main__':
     populate_courses(db)
   elif table == "Class":
     print("Will populate Class table according to the courses in Course table")
-    populate_classes_classtime(db)
-  elif table == "ClassTime":
-    print("Classtime table will be populated when Class table gets populated")
+    populate_class(db)
+  elif table == "Classtime":
+    print("Will populate Class table according to the classes in Class table")
+    populate_classtime(db)
   else:
     populate_courses(db)
-    populate_classes_classtime(db)
+    populate_class(db)
+    populate_classtime(db)
     print("If error occurs, there are probably values in the table already" \
           ", execute purgetables and try again")
 
