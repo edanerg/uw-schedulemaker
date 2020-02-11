@@ -1,5 +1,4 @@
 -- Execute once to create sample data
--- TODO: how to execute file from Cloud Shell
 -- Data: 
 --      * 1 course: CS 348
 --      * 2 classes: TTh 10-11:30, TTh 1-2:30
