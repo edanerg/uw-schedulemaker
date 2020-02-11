@@ -82,12 +82,17 @@ CREATE TABLE IF NOT EXISTS Reserve (
     enrollment_total INTEGER NOT NULL CHECK(enrollment_total >= 0)
 );
 
+-- Will likely be searching by class_id
+CREATE INDEX IF NOT EXISTS reserve_class_id
+ON Reserve(class_id);
 
+-- AppUser --
 CREATE TABLE IF NOT EXISTS AppUser (
     username VARCHAR(30) NOT NULL PRIMARY KEY,
     schedule VARCHAR(50)
 );
 
+-- CoursesTaken --
 CREATE TABLE IF NOT EXISTS CoursesTaken (
     username VARCHAR(30) NOT NULL REFERENCES AppUser(username),
     subject VARCHAR(10) NOT NULL,
@@ -95,8 +100,3 @@ CREATE TABLE IF NOT EXISTS CoursesTaken (
     FOREIGN KEY (subject, catalog_number) REFERENCES Course(subject, catalog_number) ON DELETE CASCADE,
     PRIMARY KEY (username, subject, catalog_number)
 );
-
--- Theres some issue with the syntax for this one:
--- Will likely be searching by class_id
-CREATE INDEX IF NOT EXISTS reserve_class_id
-ON Reserve(class_id);
