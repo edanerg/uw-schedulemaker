@@ -110,7 +110,7 @@ class CoursesTaken(Resource):
   def get(self):
     username = request.args.get('username')
     with db.connect() as conn:
-      all_courses = conn.execute(f'SELECT * FROM CoursesTaken, Course WHERE CoursesTaken.username = \'{username}\' AND Course.id = CoursesTaken.course_id').fetchall()
+      all_courses = conn.execute(f'SELECT * FROM CoursesTaken, Course WHERE CoursesTaken.username = \'{username}\' AND Course.subject = CoursesTaken.subject AND Course.catalog_number = CoursesTaken.catalog_number').fetchall()
       result = []
       for course in all_courses:
         course_info = {
@@ -134,7 +134,7 @@ class CoursesTaken(Resource):
   def delete(self):
     data = request.json
     with db.connect() as conn:
-      conn.execute(f'DELETE FROM CoursesTaken WHERE username = \'{data["username"]}\' AND course_id = {data["courseId"]}')
+      conn.execute(f'DELETE FROM CoursesTaken WHERE username = \'{data["username"]}\' AND subject = {data["subject"]} AND catalog_number = {data["catalog"]}')
       conn.close()
       return {'result': 'success'}
 

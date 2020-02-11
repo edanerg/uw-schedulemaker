@@ -8,7 +8,7 @@ def execute(filename, user, password):
   db = sqlalchemy.create_engine(f'postgresql+pg8000://{user}:{password}@localhost:5432/schedulemaker')
 
   # Open and read the createtables.sql file
-  path_to_sql = f'database/sql/{filename}.sql'
+  path_to_sql = f'../sql/{filename}.sql'
   fd = open(path_to_sql, 'r')
   sql = fd.read()
   fd.close()

@@ -173,7 +173,7 @@ def populate_classtime(db):
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
-  parser.add_argument("-t", dest="table", required=True)
+  parser.add_argument("-t", dest="table", required=False)
   parser.add_argument("-u", dest="user", required=False, default="root")
   parser.add_argument("-p", dest="password", required=False, default="tmp")
 
