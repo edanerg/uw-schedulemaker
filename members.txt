@@ -1,6 +1,7 @@
 Team members: Cheng Keat Chong, Anael Wan, Alex Wang, Sunny Yang
 
 Description of Work
+
 Sunny:
 - created database schema
 - wrote sql queries for creating tables and populating with sample data
@@ -17,11 +18,12 @@ Ana:
 - Show course descriptions for the frontend page.
 - Add menu that allows user to go to the course or class page.
 
-Cheng Keat Chong: - Wrote up report.pdf
+Cheng Keat Chong: 
+- Wrote up report.pdf
+- Wrote script to grab data from Waterloo API to populate the SQL Course table for local database
 
 Yuetong Wang:
 - created git repo and add front-end code.
 - create AppUser table and CoursesTaken table and added the corresponding backend endpoints
 - create user login frontEnd page
 - create the E/R diagram for AppUser and CoursesTaken
-
