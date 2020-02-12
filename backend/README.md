@@ -18,10 +18,8 @@ gunicorn --bind 0.0.0.0:8080 app:app
 
 ## 5. To connect to SQL posgres
 ### For connecting to local database:
-I followed this tutorial: https://www.codementor.io/@engineerapart/getting-started-with-postgresql-on-mac-osx-are8jcopb
 
-Which sums up to this:
-
+### Steps: 
 `brew install postgresql`
 
 `pg_ctl -D /usr/local/var/postgres start && brew services start postgresql`
@@ -35,7 +33,6 @@ postgres=# `CREATE DATABASE schedulemaker`
 
 #### To run scripts for local database:
 
-### Alex: Above might not work if you have different db username or the sql contains comments
 ### You can try this:
 python3 ./database/scripts/execute_sql.py -f createtables -u yourUsername -p yourPassword
 
