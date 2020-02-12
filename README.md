@@ -57,3 +57,8 @@ python3 ./database/scripts/populate_tables.py -u yourUsername -p yourPassword
 
 ### To Populate specific table into local database:
 python3 ./database/scripts/populate_tables.py -t 'table_you_want_to_populate' -u yourUsername -p yourPassword
+
+
+### Note to TA
+The files containing the SQL code used for creating tables, constraints, stored procedures and trigger can be found at :
+~/backend/database/sql
