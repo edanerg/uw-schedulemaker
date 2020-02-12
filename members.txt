@@ -15,4 +15,10 @@ Ana:
 - Used sqlAlchemy to connect to SQL instance in GCP. 
 - Deployed project to production (GCP).
 Cheng Keat Chong: - Wrote up report.pdf
-Yuetong Wang: - created git repo and add front-end code.
+
+Yuetong Wang:
+- created git repo and add front-end code.
+- create AppUser table and CoursesTaken table and added the corresponding backend endpoints
+- create user login frontEnd page
+- create the E/R diagram for AppUser and CoursesTaken
+
