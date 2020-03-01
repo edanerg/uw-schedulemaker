@@ -5,11 +5,9 @@
 .app-body {
   text-align: left;
   display: inline-block;
-  margin-left: 50px;
-  margin-right: 50px;
+  margin-left: 60px;
+  margin-right: 60px;
   margin-top: 30px;
-  min-width: 800px;
-  max-width: 850px;
 }
 
 .search-criteria {

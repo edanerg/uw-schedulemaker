@@ -13,24 +13,27 @@ CORS(app)
 
 class Class(Resource):
   """
-    '/class?from_time=<time>&to_time=<time>&weekdays=<day>' route
-    GET: returns list of classes within the specified time range and weekday
+    '/class?from_time=<time>&to_time=<time>&weekdays=<day>&subject=<subject>&catalog_number=<num>' route
+    GET: returns list of classes within the specified time range, weekday, subject and subject number
   """
   def get(self):
     from_time = request.args.get('from_time') or '00:00:00'
     to_time = request.args.get('to_time') or '23:59:59'
     weekdays = request.args.get('weekdays') or ''
     subject = request.args.get('subject') or ''
+    catalog_number = request.args.get('catalog_number') or ''
+
+    print(subject)
+    print(catalog_number)
 
     with db.connect() as conn:
       selected_classes = conn.execute(
-        "SELECT * FROM Classtime LEFT JOIN ("
-        "SELECT Class.id AS class_id, *  "
-        "FROM Class LEFT JOIN Course ON Course.subject = Class.subject AND Course.catalog_number = Class.catalog_number "
-        f"WHERE Course.subject LIKE '%{subject}%') "
+        "SELECT * FROM Classtime LEFT JOIN "
+        "(SELECT Class.id AS class_id, Course.subject AS c_subject, Course.catalog_number AS c_catalog, *  "
+        "FROM Class LEFT JOIN Course ON Course.subject = Class.subject AND Course.catalog_number = Class.catalog_number) "
         "AS CourseAndClass "
         "ON CourseAndClass.class_id = ClassTime.class_id "
-        f"WHERE weekdays LIKE '%{weekdays}%' "
+        f"WHERE weekdays LIKE '%{weekdays}%' AND c_subject LIKE '%{subject}%' AND c_catalog LIKE '%{catalog_number}%' "
         f"AND start_time >= '{from_time}' AND end_time <= '{to_time}'"
       )
       
@@ -55,6 +58,7 @@ class Class(Resource):
           'name': selected_class['name'],
         }
         result.append(class_info)
+        print(class_info)
       conn.close()
 
       return {'classes': result }

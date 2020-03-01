@@ -20,8 +20,8 @@ function ClassList({ classes }: props) {
 
     return (
         <div>
-            {(classes || []).map(c => 
-                <Card key={c.id} style={{marginBottom: "10px", cursor: "pointer"}} raised={hoveredClassId === c.id}
+            {(classes || []).map((c, index) => 
+                <Card key={index} style={{marginBottom: "10px", cursor: "pointer"}} raised={hoveredClassId === index}
                     onMouseEnter={() => mouseEnter(c.id)}
                     onMouseLeave={mouseExit}>
                     <CardContent>
@@ -53,18 +53,6 @@ function ClassList({ classes }: props) {
                         </Typography>
                         <Typography variant="body1" color="textSecondary" gutterBottom>
                           {`${c.building} ${c.room}`}
-                        </Typography>
-                        <Typography variant="body1" color="textPrimary" gutterBottom>
-                          Waiting Capacity
-                        </Typography>
-                        <Typography variant="body1" color="textSecondary" gutterBottom>
-                          {c.waiting_capacity}
-                        </Typography>
-                        <Typography variant="body1" color="textPrimary" gutterBottom>
-                          Waiting Total
-                        </Typography>
-                        <Typography variant="body1" color="textSecondary" gutterBottom>
-                          {c.waiting_total}
                         </Typography>
                       </ExpansionPanelDetails>
                     </ExpansionPanel>

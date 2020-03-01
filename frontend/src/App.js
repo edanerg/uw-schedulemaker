@@ -29,13 +29,6 @@ function App(){
   const [classes, setClasses] = useState([]);
   const [courses, setCourses] = useState([]);
 
-
-  useEffect(() => {
-    axios.get(`${serverURL}/class`).then(res => {
-      setClasses(res.data.classes);
-    })
-  }, []);
-
   return (
     <ThemeProvider theme={theme}>
       <Router>

@@ -30,6 +30,12 @@ function CoursesList({ courses } : props) {
                         <Typography variant="body1" color="textSecondary">
                             {c.description}
                         </Typography>
+                        <Typography variant="body1" color="textSecondary">
+                            {`Prerequisites : ${c.prerequisites}`}
+                        </Typography>
+                        <Typography variant="body1" color="textSecondary">
+                             {`Antirequisites : ${c.antirequisites}`}
+                        </Typography>
                     </CardContent>
                 </Card>
               )
