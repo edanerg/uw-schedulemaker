@@ -19,8 +19,28 @@ def get_course_schedule(subject, catalog_number):
 
 def get_all_courses():
   r = requests.get(
-    'https://api.uwaterloo.ca/v2/courses.json', params=params)
-  courses = r.json()['data']
+    'https://api.uwaterloo.ca/v2/codes/subjects.json', params=params)
+  all_subjects = r.json()['data']
 
-  return courses
+  # grabs 10 courses for each subject
+  all_courses = []
+  for subject_info in all_subjects:
+    subject = subject_info['subject']
+    r = requests.get(
+        f'https://api.uwaterloo.ca/v2/courses/{subject}.json', params=params)
+    courses = r.json()['data']
+    courses = courses[:1]
 
+    # get more info about specific course
+    for course_info in courses:
+      catalog_number = course_info['catalog_number']
+      r = requests.get(
+          f'https://api.uwaterloo.ca/v2/courses/{subject}/{catalog_number}.json', params=params)
+      more_info = r.json()['data']
+      course_info['prerequisites'] = more_info.get('prerequisites','')
+      course_info['antirequisites'] = more_info.get('antirequisites', '')
+      all_courses.append(course_info)
+
+  return all_courses
+
+get_all_courses()

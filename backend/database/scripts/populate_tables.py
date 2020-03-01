@@ -17,19 +17,21 @@ def populate_courses(db):
       subject = course['subject']
       catalog_number = course['catalog_number']
       name = course['title'].replace('\'', '\'\'')
+      prerequisites = course['prerequisites'] or ''
+      antirequisites = course['antirequisites'] or ''
       print(f"Adding {subject} {catalog_number} into Course table")
 
       # grabs info for specific course
       course_info = get_course(course_id)
       course_description = course_info['description']
       if course_description:
-        course_description = course_description.replace('\'', '\'\'')
+        course_description = course_description[:1000].replace('\'', '\'\'')
       else:
         course_description = "NULL"
 
       command = (
         f"INSERT INTO Course VALUES ('{course_id}', '{subject}', '{catalog_number}', "
-        f"'{name}', '{course_description}') "
+        f"'{name}', '{course_description}', '{prerequisites}', '{antirequisites}') "
       )
       conn.execute(command)
 
@@ -74,10 +76,6 @@ def populate_class(db):
       associated_class = schedule['associated_class']
       related_component_1 = schedule['related_component_1'] or '0'
       related_component_2 = schedule['related_component_2'] or '0'
-      enrollment_capacity = schedule['enrollment_capacity']
-      enrollment_total = schedule['enrollment_total']
-      waiting_capacity = schedule['waiting_capacity']
-      waiting_total = schedule['waiting_total']
       topic = schedule['topic'] or ''
       held_with = ','.join(schedule['held_with'])
       term = schedule['term']

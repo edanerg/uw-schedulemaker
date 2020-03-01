@@ -10,6 +10,8 @@ CREATE TABLE IF NOT EXISTS Course (
     catalog_number VARCHAR(10) NOT NULL,
     name VARCHAR(100) NOT NULL,
     description VARCHAR(1000),
+    prerequisites VARCHAR(1000),
+    antirequisites VARCHAR (1000),
     PRIMARY KEY (subject, catalog_number)
 );
 
@@ -31,7 +33,6 @@ CREATE TABLE IF NOT EXISTS Class (
     subject VARCHAR(10) NOT NULL,
     catalog_number VARCHAR(10) NOT NULL,
     units FLOAT NOT NULL CHECK (units >= 0),
-    note VARCHAR(100),  -- sometimes the note will specify to choose a TUT
     class_number INTEGER NOT NULL UNIQUE,
     class_type CHAR(3) NOT NULL, -- LEC, TUT, TST, LAB, etc
     section_number VARCHAR(10) NOT NULL, -- 001, 101, 201, etc
@@ -39,10 +40,6 @@ CREATE TABLE IF NOT EXISTS Class (
     associated_class INTEGER NOT NULL CHECK(associated_class >= 0),
     related_component_1 INTEGER,
     related_component_2 INTEGER,
-    enrollment_capacity INTEGER NOT NULL DEFAULT 0 CHECK(enrollment_capacity >= 0),
-    enrollment_total INTEGER NOT NULL DEFAULT 0 CHECK(enrollment_total >= 0),
-    waiting_capacity INTEGER NOT NULL DEFAULT 0 CHECK(waiting_capacity >= 0),
-    waiting_total INTEGER NOT NULL DEFAULT 0 CHECK(waiting_total >= 0),
     topic VARCHAR(10),
     held_with VARCHAR(10), -- comma separated course names (see CLAS 221)
     term INTEGER NOT NULL,
@@ -64,27 +61,6 @@ CREATE TABLE IF NOT EXISTS ClassTime (
     building VARCHAR(10) NOT NULL,
     room VARCHAR(10) NOT NULL
 );
-
--- Connects an instructor to a class time (since a class time can apparently be taught by multiple instructors)
-CREATE TABLE IF NOT EXISTS InstructorClassTime(
-    instructor_id INTEGER NOT NULL REFERENCES Instructor(id) ON DELETE CASCADE,
-    class_time_id INTEGER NOT NULL REFERENCES ClassTime(id) ON DELETE CASCADE,
-    PRIMARY KEY(instructor_id, class_time_id)
-);
-
--- Reserve --
--- Multiple reserves can be associated with one class
-CREATE TABLE IF NOT EXISTS Reserve (
-    id SERIAL NOT NULL PRIMARY KEY, -- not sure if needed
-    class_id INTEGER NOT NULL REFERENCES Class(id) ON DELETE CASCADE,
-    reserve_group_name VARCHAR(15) NOT NULL,
-    enrollment_capacity INTEGER NOT NULL CHECK(enrollment_capacity >= 0),
-    enrollment_total INTEGER NOT NULL CHECK(enrollment_total >= 0)
-);
-
--- Will likely be searching by class_id
-CREATE INDEX IF NOT EXISTS reserve_class_id
-ON Reserve(class_id);
 
 -- AppUser --
 CREATE TABLE IF NOT EXISTS AppUser (

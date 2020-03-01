@@ -1,6 +1,4 @@
 -- Drop all data from database
-DROP TABLE IF EXISTS Reserve;
-DROP TABLE IF EXISTS InstructorClassTime;
 DROP TABLE IF EXISTS ClassTime;
 DROP TABLE IF EXISTS Class;
 DROP TABLE IF EXISTS Instructor;
