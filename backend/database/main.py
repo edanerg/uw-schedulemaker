@@ -20,11 +20,14 @@ class Class(Resource):
     from_time = request.args.get('from_time') or '00:00:00'
     to_time = request.args.get('to_time') or '23:59:59'
     weekdays = request.args.get('weekdays') or ''
+    subject = request.args.get('subject') or ''
 
     with db.connect() as conn:
       selected_classes = conn.execute(
-        "SELECT * FROM Classtime LEFT JOIN "
-        "(SELECT Class.id AS class_id, * FROM Class LEFT JOIN Course ON Course.subject = Class.subject AND Course.catalog_number = Class.catalog_number) "
+        "SELECT * FROM Classtime LEFT JOIN ("
+        "SELECT Class.id AS class_id, *  "
+        "FROM Class LEFT JOIN Course ON Course.subject = Class.subject AND Course.catalog_number = Class.catalog_number "
+        f"WHERE Course.subject LIKE '%{subject}%') "
         "AS CourseAndClass "
         "ON CourseAndClass.class_id = ClassTime.class_id "
         f"WHERE weekdays LIKE '%{weekdays}%' "
@@ -45,17 +48,11 @@ class Class(Resource):
           'subject': selected_class['subject'],
           'catalog_number': selected_class['catalog_number'],
           'units': selected_class['units'],
-          'note': selected_class['note'],
           'class_number': selected_class['class_number'],
           'class_type': selected_class['class_type'],
           'section_number': selected_class['section_number'],
           'description': selected_class['description'],
           'name': selected_class['name'],
-          'description': selected_class['description'],
-          'enrollment_capacity': selected_class['enrollment_capacity'],
-          'enrollment_total': selected_class['enrollment_total'],
-          'waiting_capacity': selected_class['waiting_capacity'],
-          'waiting_total': selected_class['waiting_total'],
         }
         result.append(class_info)
       conn.close()

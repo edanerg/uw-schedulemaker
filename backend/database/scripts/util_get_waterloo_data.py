@@ -42,5 +42,3 @@ def get_all_courses():
       all_courses.append(course_info)
 
   return all_courses
-
-get_all_courses()

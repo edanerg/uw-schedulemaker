@@ -27,7 +27,6 @@ CREATE TABLE IF NOT EXISTS Instructor (
 -- Things to preprocess before insertion:
 -- * class_type
 -- * section_number
--- * held_with
 CREATE TABLE IF NOT EXISTS Class (
     id SERIAL NOT NULL PRIMARY KEY,
     subject VARCHAR(10) NOT NULL,
@@ -36,12 +35,11 @@ CREATE TABLE IF NOT EXISTS Class (
     class_number INTEGER NOT NULL UNIQUE,
     class_type CHAR(3) NOT NULL, -- LEC, TUT, TST, LAB, etc
     section_number VARCHAR(10) NOT NULL, -- 001, 101, 201, etc
-    campus VARCHAR(10) NOT NULL,
+    campus VARCHAR(20) NOT NULL,
     associated_class INTEGER NOT NULL CHECK(associated_class >= 0),
     related_component_1 INTEGER,
     related_component_2 INTEGER,
-    topic VARCHAR(10),
-    held_with VARCHAR(10), -- comma separated course names (see CLAS 221)
+    topic VARCHAR(1000),
     term INTEGER NOT NULL,
     academic_level VARCHAR(20),
     FOREIGN KEY (subject, catalog_number) REFERENCES Course(subject, catalog_number) ON DELETE CASCADE
@@ -73,6 +71,7 @@ CREATE TABLE IF NOT EXISTS CoursesTaken (
     username VARCHAR(30) NOT NULL REFERENCES AppUser(username),
     subject VARCHAR(10) NOT NULL,
     catalog_number VARCHAR(10) NOT NULL,
+    academic_level VARCHAR(20),
     FOREIGN KEY (subject, catalog_number) REFERENCES Course(subject, catalog_number) ON DELETE CASCADE,
     PRIMARY KEY (username, subject, catalog_number)
 );

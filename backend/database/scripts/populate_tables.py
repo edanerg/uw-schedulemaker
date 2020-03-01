@@ -4,6 +4,11 @@ import argparse
 from sys import argv
 from util_get_waterloo_data import get_all_courses, get_course, get_course_schedule
 
+def make_string_sql_safe(s):
+  if s:
+    return s.replace('\'', '\'\'')
+  return ''
+
 def populate_courses(db): 
   """
     Populates Courses tables
@@ -16,16 +21,16 @@ def populate_courses(db):
       course_id = course['course_id']
       subject = course['subject']
       catalog_number = course['catalog_number']
-      name = course['title'].replace('\'', '\'\'')
-      prerequisites = course['prerequisites'] or ''
-      antirequisites = course['antirequisites'] or ''
+      name = make_string_sql_safe(course['title'])
+      prerequisites = make_string_sql_safe(course['prerequisites'])
+      antirequisites = make_string_sql_safe(course['antirequisites'])
       print(f"Adding {subject} {catalog_number} into Course table")
 
       # grabs info for specific course
       course_info = get_course(course_id)
       course_description = course_info['description']
       if course_description:
-        course_description = course_description[:1000].replace('\'', '\'\'')
+        course_description = make_string_sql_safe(course_description[:1000])
       else:
         course_description = "NULL"
 
@@ -65,7 +70,6 @@ def populate_class(db):
       subject = schedule['subject']
       catalog_number = schedule['catalog_number']
       units = schedule['units']
-      note = schedule['note'] or ''
       class_number = schedule['class_number']
       
       section = schedule['section'].split()
@@ -77,21 +81,18 @@ def populate_class(db):
       related_component_1 = schedule['related_component_1'] or '0'
       related_component_2 = schedule['related_component_2'] or '0'
       topic = schedule['topic'] or ''
-      held_with = ','.join(schedule['held_with'])
       term = schedule['term']
       academic_level = schedule['academic_level']
 
       command = (
-        "INSERT INTO Class (subject, catalog_number, units, note, class_number, class_type, "
+        "INSERT INTO Class (subject, catalog_number, units, class_number, class_type, "
         "section_number, campus, associated_class, related_component_1, related_component_2, "
-        "enrollment_capacity, enrollment_total, waiting_capacity , waiting_total, "
-        "topic, held_with, term, academic_level) VALUES ("
+        "topic, term, academic_level) VALUES ("
         f"'{subject}', '{catalog_number}', "
-        f"'{units}', '{note}', '{class_number}', "
+        f"'{units}', '{class_number}', "
         f"'{class_type}', '{section_number}', '{campus}', "
         f"'{associated_class}', '{related_component_1}', '{related_component_2}', "
-        f"'{enrollment_capacity}', '{enrollment_total}', '{waiting_capacity}', "
-        f"'{waiting_total}', '{topic}', '{held_with}', "
+        f"'{topic}', "
         f"'{term}', '{academic_level}' ) "
       )
       conn.execute(command)
@@ -183,6 +184,7 @@ if __name__ == '__main__':
   table = arguments.table
 
   if table == "Course":
+    print("Populating Course table")
     populate_courses(db)
   elif table == "Class":
     print("Will populate Class table according to the courses in Course table")
@@ -191,6 +193,7 @@ if __name__ == '__main__':
     print("Will populate Class table according to the classes in Class table")
     populate_classtime(db)
   else:
+    print("Populating all tables")
     populate_courses(db)
     populate_class(db)
     populate_classtime(db)
