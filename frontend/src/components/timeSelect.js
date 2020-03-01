@@ -60,7 +60,7 @@ function TimeSelect({ setClasses }: props) {
       setSelectedDays(defaultSelectedDays);
       setStartTime(null);
       setEndTime(null);
-      setSubject(null);
+      setSubject(defaultCourse);
       setCatalog(null);
     }
 

@@ -23,9 +23,6 @@ class Class(Resource):
     subject = request.args.get('subject') or ''
     catalog_number = request.args.get('catalog_number') or ''
 
-    print(subject)
-    print(catalog_number)
-
     with db.connect() as conn:
       selected_classes = conn.execute(
         "SELECT * FROM Classtime LEFT JOIN "
@@ -58,7 +55,6 @@ class Class(Resource):
           'name': selected_class['name'],
         }
         result.append(class_info)
-        print(class_info)
       conn.close()
 
       return {'classes': result }
