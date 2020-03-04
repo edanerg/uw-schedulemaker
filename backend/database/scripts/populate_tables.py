@@ -4,10 +4,10 @@ import argparse
 from sys import argv
 from util_get_waterloo_data import get_all_courses, get_course, get_course_schedule
 
-def make_string_sql_safe(s):
+def make_string_sql_safe(s, default_char):
   if s:
     return s.replace('\'', '\'\'')
-  return ''
+  return default_char
 
 def populate_courses(db): 
   """
@@ -21,16 +21,16 @@ def populate_courses(db):
       course_id = course['course_id']
       subject = course['subject']
       catalog_number = course['catalog_number']
-      name = make_string_sql_safe(course['title'])
-      prerequisites = make_string_sql_safe(course['prerequisites'])
-      antirequisites = make_string_sql_safe(course['antirequisites'])
+      name = make_string_sql_safe(course['title'], '')
+      prerequisites = make_string_sql_safe(course['prerequisites'], '')
+      antirequisites = make_string_sql_safe(course['antirequisites'], '')
       print(f"Adding {subject} {catalog_number} into Course table")
 
       # grabs info for specific course
       course_info = get_course(course_id)
       course_description = course_info['description']
       if course_description:
-        course_description = make_string_sql_safe(course_description[:1000])
+        course_description = make_string_sql_safe(course_description[:1000], '')
       else:
         course_description = "NULL"
 
@@ -78,9 +78,9 @@ def populate_class(db):
 
       campus = schedule['campus']
       associated_class = schedule['associated_class']
-      related_component_1 = make_string_sql_safe(schedule['related_component_1']) or '0'
-      related_component_2 = make_string_sql_safe(schedule['related_component_2']) or '0'
-      topic = schedule['topic'] or ''
+      related_component_1 = make_string_sql_safe(schedule['related_component_1'], '0')
+      related_component_2 = make_string_sql_safe(schedule['related_component_2'], '0')
+      topic = make_string_sql_safe(schedule['topic'], '')
       term = schedule['term']
       academic_level = schedule['academic_level']
 
