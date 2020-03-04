@@ -78,8 +78,8 @@ def populate_class(db):
 
       campus = schedule['campus']
       associated_class = schedule['associated_class']
-      related_component_1 = schedule['related_component_1'] or '0'
-      related_component_2 = schedule['related_component_2'] or '0'
+      related_component_1 = make_string_sql_safe(schedule['related_component_1']) or '0'
+      related_component_2 = make_string_sql_safe(schedule['related_component_2']) or '0'
       topic = schedule['topic'] or ''
       term = schedule['term']
       academic_level = schedule['academic_level']
