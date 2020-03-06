@@ -75,3 +75,10 @@ CREATE TABLE IF NOT EXISTS CoursesTaken (
     FOREIGN KEY (subject, catalog_number) REFERENCES Course(subject, catalog_number) ON DELETE CASCADE,
     PRIMARY KEY (username, subject, catalog_number)
 );
+
+-- UserSchedule --
+CREATE TABLE IF NOT EXISTS UserSchedule (
+    username VARCHAR(30) NOT NULL REFERENCES AppUser(username),
+    class_number INTEGER NOT NULL REFERENCES Class(class_number),
+    PRIMARY KEY (username, class_number)
+);

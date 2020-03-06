@@ -1,0 +1,105 @@
+
+GO!
+KC Cheng
+My Academics
+Course Selection (Undergrad only)
+Search for Classes
+Enroll
+ 	My Class Schedule	 	 	|	 	 	Shopping Cart	 	 	|	 	 	Add	 	 	|	 	 	Drop	 	 	|	 	 	Swap	 	 	|	 	 	Edit	 	 	|	 	 	Term Information	 	 	|	 	 	Exam Information
+My Class Schedule (Download Schedule)
+List View
+Weekly Calendar View
+Select Display Option
+L
+Winter 2020 | Undergraduate | University of Waterloo
+Group Box
+Collapse section Class Schedule Filter Options Class Schedule Filter Options
+Show Enrolled Classes
+Show Dropped Classes
+Show Waitlisted Classes
+CS 348 - Intro to Database Management
+Status	Units	Grading	Deadlines
+Enrolled
+0.50
+Numeric Grading Basis
+Academic Calendar Deadlines
+Class Nbr	Section	Component	Days & Times	Room	Instructor	Start/End Date
+6354
+002
+LEC
+TTh 1:00PM - 2:20PM
+MC 4040
+Xi He
+01/06/2020 - 04/03/2020
+6266
+101
+TST
+Th 7:00PM - 8:50PM
+TBA
+Dalibor Dvorski
+02/13/2020 - 02/13/2020
+ECON 371 - Business Finance 1
+Status	Units	Grading	Deadlines
+Enrolled
+0.50
+Numeric Grading Basis
+Academic Calendar Deadlines
+Class Nbr	Section	Component	Days & Times	Room	Instructor	Start/End Date
+4250
+002
+LEC
+MWF 1:30PM - 2:20PM
+RCH 103
+Predrag Rajsic
+01/06/2020 - 04/03/2020
+ECON 423 - Time Series Econometrics
+Status	Units	Grading	Deadlines
+Enrolled
+0.50
+Numeric Grading Basis
+Academic Calendar Deadlines
+Class Nbr	Section	Component	Days & Times	Room	Instructor	Start/End Date
+7828
+001
+LEC
+TTh 10:00AM - 11:20AM
+DWE 3516
+Dinghai Xu
+01/06/2020 - 04/03/2020
+STAT 441 - Stat Learning-Classification
+Status	Units	Grading	Deadlines
+Enrolled
+0.50
+Numeric Grading Basis
+Academic Calendar Deadlines
+Class Nbr	Section	Component	Days & Times	Room	Instructor	Start/End Date
+6330
+001
+LEC
+TTh 2:30PM - 3:50PM
+MC 4020
+Matthias Schonlau
+01/06/2020 - 04/03/2020
+STAT 443 - Forecasting
+Status	Units	Grading	Deadlines
+Enrolled
+0.50
+Numeric Grading Basis
+Academic Calendar Deadlines
+Class Nbr	Section	Component	Days & Times	Room	Instructor	Start/End Date
+5767
+001
+LEC
+TTh 8:30AM - 9:50AM
+B1 271
+Reza Ramezan
+01/06/2020 - 04/03/2020
+6172
+101
+TUT
+F 8:30AM - 9:20AM
+M3 1006
+Reza Ramezan
+01/06/2020 - 04/03/2020
+Printer Friendly Page
+Go to top iconGo to top
