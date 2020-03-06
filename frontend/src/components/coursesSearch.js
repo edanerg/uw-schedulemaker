@@ -64,7 +64,7 @@ function CoursesSearch({ courses, setCourses }: props) {
 
     return (
         <div>
-            <div style={{width: '200px', display: "inline-block", marginRight: '100px'}}>
+            <div style={{width: '200px', display: "inline-block", marginRight: '100px', marginBottom: '60px'}}>
               <Select
                 options={subjects}
                 onChange={option => setSubject(option != null ? option.value : null)}
