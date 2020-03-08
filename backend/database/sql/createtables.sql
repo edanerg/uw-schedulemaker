@@ -63,7 +63,7 @@ CREATE TABLE IF NOT EXISTS ClassTime (
 -- AppUser --
 CREATE TABLE IF NOT EXISTS AppUser (
     username VARCHAR(30) NOT NULL PRIMARY KEY,
-    schedule VARCHAR(50)
+    academic_level VARCHAR(20),
 );
 
 -- CoursesTaken --
@@ -71,7 +71,6 @@ CREATE TABLE IF NOT EXISTS CoursesTaken (
     username VARCHAR(30) NOT NULL REFERENCES AppUser(username),
     subject VARCHAR(10) NOT NULL,
     catalog_number VARCHAR(10) NOT NULL,
-    academic_level VARCHAR(20),
     FOREIGN KEY (subject, catalog_number) REFERENCES Course(subject, catalog_number) ON DELETE CASCADE,
     PRIMARY KEY (username, subject, catalog_number)
 );
