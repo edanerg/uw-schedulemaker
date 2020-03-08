@@ -2,16 +2,17 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles(theme => ({
+
 }));
 
-function Profile() {
+function MainPage() {
   const classes = useStyles();
 
   return (
     <div>
-      profile page
+      main page(WIP) - user uploads their schedule. app will show available classes based on their schedule
     </div>
   )
 }
 
-export default Profile;
+export default MainPage;

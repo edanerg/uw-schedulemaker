@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import ClassSearch from './components/classSearch';
 import CoursesSearch from './components/coursesSearch';
 import Profile from './components/profile';
+import MainPage from './components/mainpage';
 import Bar from './components/bar';
 import Login from './components/login';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
@@ -37,7 +38,10 @@ function App(){
       <div className="App">
         <div className="app-body">
             <Switch>
-              <Route exact path="/search-class">
+              <Route exact path="/">
+                <MainPage />
+              </Route>
+              <Route exact path="/class">
                 <ClassSearch user={user} classes={classes} setUser={setUser} setClasses={setClasses} />
               </Route>
               <Route exact path="/login">
@@ -49,7 +53,7 @@ function App(){
               <Route exact path="/profile">
                 <Profile />
               </Route>
-              <Route render={() => <Redirect to={{pathname: "/profile"}} />} />
+              <Route render={() => <Redirect to={{pathname: "/"}} />} />
             </Switch>
         </div>
       </div>
