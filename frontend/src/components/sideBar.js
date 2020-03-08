@@ -28,6 +28,11 @@ function SideBar({ open, setOpen }: props) {
       <List className={classes.list} subheader={<ListSubheader>Menu</ListSubheader>}>
         <ListItem button onClick={() => handleRouteChange('')}>
           <Typography variant="h6">
+              Main page
+          </Typography>
+        </ListItem>
+        <ListItem button onClick={() => handleRouteChange('class')}>
+          <Typography variant="h6">
               View Classes
           </Typography>
         </ListItem>

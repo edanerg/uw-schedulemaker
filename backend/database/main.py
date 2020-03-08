@@ -6,6 +6,7 @@ from json import dumps
 from webargs.flaskparser import use_args
 from webargs import fields
 from flask_cors import CORS
+from .utils import *
 
 app = Flask(__name__)
 api = Api(app)
@@ -103,6 +104,23 @@ class User(Resource):
         return {'result': 'success'}
 
 
+class Schedule(Resource):
+  def post(self):
+    data = request.json
+    class_nums = extract_class_num(data["schedule"])
+    with db.connect() as conn:
+      class_info_list = []
+      for class_num in class_nums:
+        class_info = conn.execute(
+            f'SELECT * FROM Class WHERE class_number = \'{class_num}\''
+        )
+        result = [dict(row) for row in class_info]
+        class_info_list.extend(result)
+
+      conn.close()
+      return {'classes': class_info_list}
+
+
 class CoursesTaken(Resource):
   def get(self):
     username = request.args.get('username')
@@ -145,6 +163,7 @@ class Main(Resource):
       return "Hi there!"
 
 api.add_resource(Main, '/')
+api.add_resource(Schedule, '/schedule')
 api.add_resource(Courses, '/courses')
 api.add_resource(User, '/user')
 api.add_resource(CoursesTaken, '/coursesTaken')

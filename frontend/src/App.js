@@ -39,7 +39,7 @@ function App(){
         <div className="app-body">
             <Switch>
               <Route exact path="/">
-                <MainPage />
+                <MainPage user={user}/>
               </Route>
               <Route exact path="/class">
                 <ClassSearch user={user} classes={classes} setUser={setUser} setClasses={setClasses} />
