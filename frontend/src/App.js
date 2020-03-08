@@ -37,13 +37,11 @@ function App(){
       <div className="App">
         <div className="app-body">
             <Switch>
-              <Route exact path="/">
+              <Route exact path="/search-class">
                 <ClassSearch user={user} classes={classes} setUser={setUser} setClasses={setClasses} />
               </Route>
               <Route exact path="/login">
                 <Login user={user} setUser={setUser} setCoursesTaken={setCoursesTaken}/>
-              </Route>
-              <Route exact path="/courseHistory">
               </Route>
               <Route exact path="/courses">
                 <CoursesSearch courses={courses} setCourses={setCourses} />
@@ -51,7 +49,7 @@ function App(){
               <Route exact path="/profile">
                 <Profile />
               </Route>
-              <Route render={() => <Redirect to={{pathname: "/"}} />} />
+              <Route render={() => <Redirect to={{pathname: "/profile"}} />} />
             </Switch>
         </div>
       </div>
