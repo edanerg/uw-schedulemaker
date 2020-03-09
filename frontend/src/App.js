@@ -50,8 +50,8 @@ function App(){
               <Route exact path="/courses">
                 <CoursesSearch courses={courses} setCourses={setCourses} />
               </Route>
-              <Route exact path="/profile">
-                <Profile />
+              <Route exact path="/profile" render={({location}) => user ? (<Profile user={user} coursesTaken={coursesTaken} setCoursesTaken={setCoursesTaken}/>)
+              : (<Redirect to={{ pathname: "/login", state: { from: location }}}/>)}>
               </Route>
               <Route render={() => <Redirect to={{pathname: "/"}} />} />
             </Switch>
