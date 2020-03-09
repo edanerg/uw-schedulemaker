@@ -28,11 +28,10 @@ CREATE TABLE IF NOT EXISTS Instructor (
 -- * class_type
 -- * section_number
 CREATE TABLE IF NOT EXISTS Class (
-    id SERIAL NOT NULL PRIMARY KEY,
+    class_number INTEGER NOT NULL PRIMARY KEY,
     subject VARCHAR(10) NOT NULL,
     catalog_number VARCHAR(10) NOT NULL,
     units FLOAT NOT NULL CHECK (units >= 0),
-    class_number INTEGER NOT NULL UNIQUE,
     class_type CHAR(3) NOT NULL, -- LEC, TUT, TST, LAB, etc
     section_number VARCHAR(10) NOT NULL, -- 001, 101, 201, etc
     campus VARCHAR(20) NOT NULL,
@@ -49,7 +48,7 @@ CREATE TABLE IF NOT EXISTS Class (
 -- Some classes have multiple locations. For example, MATH 135 has one class MWF and one class T in different rooms
 CREATE TABLE IF NOT EXISTS ClassTime (
     id SERIAL NOT NULL PRIMARY KEY,
-    class_id INTEGER NOT NULL REFERENCES Class(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    class_number INTEGER NOT NULL REFERENCES Class(class_number) ON DELETE CASCADE ON UPDATE CASCADE,
     start_time TIME NOT NULL, -- format: 'hh:mm:ss', stored in 24-hour EST
     end_time TIME NOT NULL,
     weekdays VARCHAR(10) NOT NULL, -- M,T,W,Th,F,Sa,Su
@@ -58,13 +57,13 @@ CREATE TABLE IF NOT EXISTS ClassTime (
     is_active BOOLEAN NOT NULL DEFAULT TRUE, -- true if is_tba, is_cancelled, and is_closed are all false
     building VARCHAR(10) NOT NULL,
     room VARCHAR(10) NOT NULL,
-    instructor_id INTEGER REFERENCES Instructor(id);
+    instructor_id INTEGER REFERENCES Instructor(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- AppUser --
 CREATE TABLE IF NOT EXISTS AppUser (
     username VARCHAR(30) NOT NULL PRIMARY KEY,
-    academic_level VARCHAR(20),
+    academic_level VARCHAR(20)
 );
 
 -- CoursesTaken --

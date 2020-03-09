@@ -86,31 +86,27 @@ def populate_class(db):
       academic_level = schedule['academic_level']
 
       command = (
-        "INSERT INTO Class (subject, catalog_number, units, class_number, class_type, "
-        "section_number, campus, associated_class, related_component_1, related_component_2, "
-        "topic, term, academic_level) VALUES ("
-        f"'{subject}', '{catalog_number}', "
-        f"'{units}', '{class_number}', "
+        "INSERT INTO Class VALUES ("
+        f"'{class_number}', '{subject}', '{catalog_number}', '{units}', "
         f"'{class_type}', '{section_number}', '{campus}', "
         f"'{associated_class}', '{related_component_1}', '{related_component_2}', "
-        f"'{topic}', "
-        f"'{term}', '{academic_level}' ) "
+        f"'{topic}', '{term}', '{academic_level}') "
       )
       conn.execute(command)
 
 
 def populate_classtime(db):
   """
-    Populates Classtime tables
+    Populates Classtime tables and Instructor table
     Grabs the schedules for each course at /courses/{subject}/{catalog_number}
   """
-  # Get all existing courses in the Class table
+  # Get all existing classes in the Class table
   db_classes = []
   with db.connect() as conn:
     all_db_classes = conn.execute("SELECT * FROM Class")
     for row in all_db_classes:
       db_classes.append({
-        'class_id': row['id'],
+        'class_number': row['class_number'],
         'subject': row['subject'],
         'catalog_number': row['catalog_number']
       })
@@ -123,19 +119,19 @@ def populate_classtime(db):
       # Grab only the 'classes' field in the api
       classes = {}
       if schedule:
-        classes['class_id'] = db_class['class_id']
+        classes['class_number'] = db_class['class_number']
         classes['classes'] = schedule['classes']
         classes['last_updated'] = schedule['last_updated']
         all_classes.append(classes)
 
-  # print(all_classes)
+  print(all_classes)
 
   # Update to database
   with db.connect() as conn:
     for class_ in all_classes:
       class_times = class_['classes']
       current_year = class_['last_updated'].split('-')[0]
-      class_id = class_['class_id']
+      class_number = class_['class_number']
       for class_time in class_times:
         date = class_time['date']
         if date['weekdays']:
@@ -145,22 +141,25 @@ def populate_classtime(db):
           end_time = date['end_time']
           weekdays = date['weekdays']
 
+          # Populates Instructor table
           instructor_id = None
-          if len(class_time['instructors']) > 0:
-            instructor_name = class_time['instructors'][0]
+          if class_time['instructors']:
+            instructor_name = make_string_sql_safe(class_time['instructors'][0], '')
             # If instructor exists, don't insert. Otherwise, insert
             instructor_id = conn.execute(
-              text("SELECT id FROM Instructor WHERE name = :name"), name = instructor_name
+                f"SELECT id FROM Instructor WHERE name = '{instructor_name}'"
             ).first()
             if instructor_id is None:
               conn.execute(
-                text("INSERT INTO Instructor (name) VALUES (:name)"), name = instructor_name
+                f"INSERT INTO Instructor (name) VALUES ('{instructor_name}')"
               )
               instructor_id = conn.execute(
-                text("SELECT id FROM Instructor WHERE name = :name"), name = instructor_name
+                f"SELECT id FROM Instructor WHERE name = '{instructor_name}'"
               ).first()
-            instructor_id = instructor_id[0]
-  
+            instructor_id = f"'{instructor_id[0]}'"
+          else:
+            instructor_id = "NULL"
+
           # Not sure how to add null to datetime
           default_date = '1900-01-01'
           start_date = date['start_date'] or default_date
@@ -171,24 +170,13 @@ def populate_classtime(db):
             end_date = f"{current_year}-{end_date.replace('/', '-')}"
 
           is_active = not (date['is_tba'] and date['is_cancelled'] and date['is_closed'])
-          # can change this id
-          classtime_id = f'{building}-{room}-{start_date}-{start_time}-{weekdays}'
           command = (
-            "INSERT INTO ClassTime (class_id, start_time, end_time, weekdays,"
-            "start_date, end_date, is_active, building, room) VALUES ( "
-            f"'{class_id}', '{start_time}', "
+            "INSERT INTO ClassTime (class_number, start_time, end_time, weekdays,"
+            "start_date, end_date, is_active, building, room, instructor_id) VALUES ( "
+            f"'{class_number}', '{start_time}', "
             f"'{end_time}', '{weekdays}', '{start_date}', "
             f"'{end_date}', '{is_active}', '{building}', "
-            f"'{room}'); "
-          )
-          if instructor_id:
-            command = (
-              "INSERT INTO ClassTime (class_id, start_time, end_time, weekdays,"
-              "start_date, end_date, is_active, building, room, instructor_id) VALUES ( "
-              f"'{class_id}', '{start_time}', "
-              f"'{end_time}', '{weekdays}', '{start_date}', "
-              f"'{end_date}', '{is_active}', '{building}', "
-              f"'{room}', '{instructor_id}'); "
+            f"'{room}', {instructor_id}) ON CONFLICT DO NOTHING; "
           )
           conn.execute(command)
 
@@ -223,8 +211,6 @@ if __name__ == '__main__':
     populate_courses(db)
     populate_class(db)
     populate_classtime(db)
-    print("If error occurs, there are probably values in the table already" \
-          ", execute purgetables and try again")
 
 
 
