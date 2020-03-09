@@ -36,10 +36,6 @@ function MainPage({ user }: props) {
   return (
     <>
       <Typography variant="h5" gutterBottom>
-        (Work in progress)
-      </Typography>
-      <br/><br/><br/>
-      <Typography variant="h5" gutterBottom>
           Schedule
       </Typography>
       <Typography variant="body1" gutterBottom>
@@ -49,7 +45,7 @@ function MainPage({ user }: props) {
         className={classes.textbox}
         fullWidth
         multiline
-        rowsMax="5"
+        rowsMax="9"
         value={pastedSchedule}
         onChange={e => setPastedSchedule(e.target.value)}
         margin="normal"
@@ -85,6 +81,12 @@ function MainPage({ user }: props) {
           )
         })}
       </List>
+      <Typography variant="h5" gutterBottom>
+        List of Classes that fit your schedule:
+      </Typography>
+      <Typography variant="body1" gutterBottom>
+        (TO BE IMPLEMENTED)
+      </Typography>
     </>
   )
 }
