@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Typography, TextField, Button, List, ListItem, Grid } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import axios from 'axios';
@@ -16,15 +16,22 @@ const useStyles = makeStyles(theme => ({
 
 function MainPage({ user }: props) {
   const classes = useStyles();
-  const [pastedSchedule, setPastedSchedule] = useState('Class Nbr\n6439\n Class Nbr\n6345\nClass Nbr\n8648');
+  const [pastedSchedule, setPastedSchedule] = useState('');
   const [userClasses, setUserClasses] = useState([]);
 
   const uploadSchedule = () => {
     axios.post(`${serverURL}/schedule`, {
-      schedule: pastedSchedule
+      schedule: pastedSchedule,
+      username: user ? user.username : '',
     })
     .then(res => setUserClasses(res.data.classes));
   };
+
+  useEffect(() => {
+    axios.get(`${serverURL}/schedule`, {params: 
+      {username: user ? user.username : ''}
+    }).then(res => setUserClasses(res.data.schedule));
+  }, [user])
 
   return (
     <>
@@ -78,10 +85,6 @@ function MainPage({ user }: props) {
           )
         })}
       </List>
-      <Typography variant="h5" gutterBottom>
-        Classes you can add
-      </Typography>
-      {console.log(userClasses)}
     </>
   )
 }

@@ -6,7 +6,7 @@ from json import dumps
 from webargs.flaskparser import use_args
 from webargs import fields
 from flask_cors import CORS
-from .utils import *
+from .db_functions import *
 
 app = Flask(__name__)
 api = Api(app)
@@ -104,35 +104,24 @@ class User(Resource):
 
 
 class Schedule(Resource):
+  def get(self):
+    username = request.args.get('username') or ''
+    user_class_nums = get_users_classnums(username)
+    class_schedule_list = get_class_schedule(user_class_nums)
+    
+    return {'schedule': class_schedule_list}
+
   def post(self):
     data = request.json
-    class_nums = extract_class_num(data["schedule"])
-    with db.connect() as conn:
-      classes_list = []
-      for class_num in class_nums:
-        all_classes = conn.execute(
-          'SELECT Class.class_number AS class_nbr, *'
-          'FROM ClassTime LEFT JOIN Class ON Class.class_number = ClassTime.class_number '
-          f'WHERE ClassTime.class_number = \'{class_num}\''
-        )
-        for class_info in all_classes:
-          class_info = {
-            'id': class_info['class_nbr'],
-            'start_time': class_info['start_time'].strftime("%H:%M:%S"),
-            'end_time': class_info['end_time'].strftime("%H:%M:%S"),
-            'weekdays': class_info['weekdays'],
-            'building': class_info['building'],
-            'room': class_info['room'],
-            'subject': class_info['subject'],
-            'catalog_number': class_info['catalog_number'],
-            'class_type': class_info['class_type'],
-            'topic': class_info['topic'],
-            'section_number': class_info['section_number'],
-          }
-          classes_list.append(class_info)
+    class_numbers = extract_class_num(data["schedule"])
+    username = data["username"]
 
-      conn.close()
-      return {'classes': classes_list}
+    if username and class_numbers:
+      add_user_schedule(username, class_numbers)
+    
+    class_schedule_list = get_class_schedule(class_numbers)
+
+    return {'classes': class_schedule_list}
 
 
 class CoursesTaken(Resource):
