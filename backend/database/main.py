@@ -27,7 +27,7 @@ class Class(Resource):
     with db.connect() as conn:
       selected_classes = conn.execute(
         "SELECT * FROM Classtime LEFT JOIN "
-        "(SELECT Class.id AS class_number, Course.subject AS c_subject, Course.catalog_number AS c_catalog, *  "
+        "(SELECT Class.class_number AS class_num, Course.subject AS c_subject, Course.catalog_number AS c_catalog, *  "
         "FROM Class LEFT JOIN Course ON Course.subject = Class.subject AND Course.catalog_number = Class.catalog_number) "
         "AS CourseAndClass "
         "ON CourseAndClass.class_number = ClassTime.class_number "
@@ -39,7 +39,6 @@ class Class(Resource):
       result = []
       for selected_class in selected_classes:
         class_info = {
-          'id': selected_class['class_number'],
           'start_time': selected_class['start_time'].strftime("%H:%M:%S"),
           'end_time': selected_class['end_time'].strftime("%H:%M:%S"),
           'weekdays': selected_class['weekdays'],
@@ -49,7 +48,7 @@ class Class(Resource):
           'subject': selected_class['subject'],
           'catalog_number': selected_class['catalog_number'],
           'units': selected_class['units'],
-          'class_number': selected_class['class_number'],
+          'class_number': selected_class['class_num'],
           'class_type': selected_class['class_type'],
           'section_number': selected_class['section_number'],
           'description': selected_class['description'],
