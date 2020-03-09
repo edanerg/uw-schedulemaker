@@ -29,7 +29,7 @@ def get_all_courses():
     r = requests.get(
         f'https://api.uwaterloo.ca/v2/courses/{subject}.json', params=params)
     courses = r.json()['data']
-    courses = courses[:10]
+    courses = courses[:1]
 
     # get more info about specific course
     for course_info in courses:
