@@ -3,12 +3,10 @@ Team members: Cheng Keat Chong, Anael Wan, Alex Wang, Sunny Yang
 Description of Work
 
 Sunny:
-- created database schema
-- wrote sql queries for creating tables and populating with sample data
-- created E/R diagram for Course, Instructor, Class, ClassTime, InstructorClassTime, and Reserve
-- created page at /courses, where user can view all UW courses and filter by subject or course code
-    - this includes the SQL queries for selecting courses
-- created test-sample.sql and test-sample.out
+- Wrote report.pdf
+- Updated E/R diagram to reflect schema changes
+- Added instructor processing when grabbing data for classes
+- Created test-production.sql and test-production.out
 
 Ana:
 - Set up frontend and backend project.
