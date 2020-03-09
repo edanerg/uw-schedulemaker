@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS Course (
 -- We have no way of handling instructors with the same name. 
 CREATE TABLE IF NOT EXISTS Instructor (
     id SERIAL NOT NULL PRIMARY KEY,
-    name VARCHAR(30) NOT NULL
+    name VARCHAR(30) NOT NULL UNIQUE
 );
 
 -- Class --
@@ -57,7 +57,8 @@ CREATE TABLE IF NOT EXISTS ClassTime (
     end_date DATE,
     is_active BOOLEAN NOT NULL DEFAULT TRUE, -- true if is_tba, is_cancelled, and is_closed are all false
     building VARCHAR(10) NOT NULL,
-    room VARCHAR(10) NOT NULL
+    room VARCHAR(10) NOT NULL,
+    instructor_id INTEGER REFERENCES Instructor(id);
 );
 
 -- AppUser --

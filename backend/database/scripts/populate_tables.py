@@ -3,6 +3,7 @@ import re
 import argparse
 from sys import argv
 from util_get_waterloo_data import get_all_courses, get_course, get_course_schedule
+from sqlalchemy import text
 
 def make_string_sql_safe(s, default_char):
   if s:
@@ -127,7 +128,7 @@ def populate_classtime(db):
         classes['last_updated'] = schedule['last_updated']
         all_classes.append(classes)
 
-  print(all_classes)
+  # print(all_classes)
 
   # Update to database
   with db.connect() as conn:
@@ -144,6 +145,22 @@ def populate_classtime(db):
           end_time = date['end_time']
           weekdays = date['weekdays']
 
+          instructor_id = None
+          if len(class_time['instructors']) > 0:
+            instructor_name = class_time['instructors'][0]
+            # If instructor exists, don't insert. Otherwise, insert
+            instructor_id = conn.execute(
+              text("SELECT id FROM Instructor WHERE name = :name"), name = instructor_name
+            ).first()
+            if instructor_id is None:
+              conn.execute(
+                text("INSERT INTO Instructor (name) VALUES (:name)"), name = instructor_name
+              )
+              instructor_id = conn.execute(
+                text("SELECT id FROM Instructor WHERE name = :name"), name = instructor_name
+              ).first()
+            instructor_id = instructor_id[0]
+  
           # Not sure how to add null to datetime
           default_date = '1900-01-01'
           start_date = date['start_date'] or default_date
@@ -163,6 +180,15 @@ def populate_classtime(db):
             f"'{end_time}', '{weekdays}', '{start_date}', "
             f"'{end_date}', '{is_active}', '{building}', "
             f"'{room}'); "
+          )
+          if instructor_id:
+            command = (
+              "INSERT INTO ClassTime (class_id, start_time, end_time, weekdays,"
+              "start_date, end_date, is_active, building, room, instructor_id) VALUES ( "
+              f"'{class_id}', '{start_time}', "
+              f"'{end_time}', '{weekdays}', '{start_date}', "
+              f"'{end_date}', '{is_active}', '{building}', "
+              f"'{room}', '{instructor_id}'); "
           )
           conn.execute(command)
 
@@ -190,7 +216,7 @@ if __name__ == '__main__':
     print("Will populate Class table according to the courses in Course table")
     populate_class(db)
   elif table == "Classtime":
-    print("Will populate Class table according to the classes in Class table")
+    print("Will populate ClassTime table according to the classes in Class table")
     populate_classtime(db)
   else:
     print("Populating all tables")
