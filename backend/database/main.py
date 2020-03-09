@@ -142,14 +142,27 @@ class CoursesTaken(Resource):
   def post(self):
     data = request.json
     with db.connect() as conn:
-      conn.execute(f'INSERT INTO CoursesTaken VALUES (\'{data["username"]}\', {data["courseId"]})')
+      matched_course = conn.execute(f'SELECT * FROM Course WHERE Course.subject = \'{data["subject"]}\' AND Course.catalog_number = \'{data["catalog_number"]}\'').fetchone()
+      if matched_course is None: return {'result': 'ERROR: No Such Course.'}
+      matched_course = dict(matched_course.items())
+      try:
+        conn.execute(f'INSERT INTO CoursesTaken VALUES (\'{data["username"]}\', \'{matched_course["subject"]}\', \'{matched_course["catalog_number"]}\')')
+      except:
+        return {'result': 'ERROR: Course Already Exists.'}
       conn.close()
-      return {'result': 'success'}
+      return {'result': 'success', 'course': matched_course}
   
   def delete(self):
-    data = request.json
+    username = request.args.get('username')
+    subject = request.args.get('subject')
+    catalog_number = request.args.get('catalog_number')
     with db.connect() as conn:
-      conn.execute(f'DELETE FROM CoursesTaken WHERE username = \'{data["username"]}\' AND subject = {data["subject"]} AND catalog_number = {data["catalog"]}')
+      matched_course = conn.execute(f'SELECT * FROM CoursesTaken WHERE username = \'{username}\' AND subject = \'{subject}\' AND catalog_number = \'{catalog_number}\'').fetchone()
+      if matched_course is None: return {'result': 'ERROR: You have not taken this course.'}
+      try:
+        conn.execute(f'DELETE FROM CoursesTaken WHERE username = \'{username}\' AND subject = \'{subject}\' AND catalog_number = \'{catalog_number}\'')
+      except:
+        return {'result': 'ERROR: Course not uploaded.'}
       conn.close()
       return {'result': 'success'}
 
