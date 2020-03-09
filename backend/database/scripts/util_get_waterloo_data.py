@@ -17,6 +17,15 @@ def get_course_schedule(subject, catalog_number):
 
   return course_schedule
 
+
+def get_class_schedule(class_number):
+  r = requests.get(
+      f'https://api.uwaterloo.ca/v2/courses/{class_number}/schedule.json', params=params)
+  class_schedule = r.json()['data'][0]
+
+  return class_schedule
+
+
 def get_all_courses():
   r = requests.get(
     'https://api.uwaterloo.ca/v2/codes/subjects.json', params=params)

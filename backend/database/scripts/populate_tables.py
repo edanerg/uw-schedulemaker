@@ -2,7 +2,7 @@ import sqlalchemy
 import re
 import argparse
 from sys import argv
-from util_get_waterloo_data import get_all_courses, get_course, get_course_schedule
+from util_get_waterloo_data import *
 from sqlalchemy import text
 
 def make_string_sql_safe(s, default_char):
@@ -100,85 +100,72 @@ def populate_classtime(db):
     Populates Classtime tables and Instructor table
     Grabs the schedules for each course at /courses/{subject}/{catalog_number}
   """
-  # Get all existing classes in the Class table
+  # Get all existing class numbers in the Class table
   db_classes = []
   with db.connect() as conn:
-    all_db_classes = conn.execute("SELECT * FROM Class")
-    for row in all_db_classes:
-      db_classes.append({
-        'class_number': row['class_number'],
-        'subject': row['subject'],
-        'catalog_number': row['catalog_number']
-      })
+    all_db_classes = conn.execute("SELECT class_number FROM Class")
+    db_classes = [dict(row) for row in all_db_classes]
 
   # Get class schedule for all classes
   all_classes = []
   for db_class in db_classes:
-    all_schedules = get_course_schedule(db_class['subject'], db_class['catalog_number'])
-    for schedule in all_schedules:
-      # Grab only the 'classes' field in the api
-      classes = {}
-      if schedule:
-        classes['class_number'] = db_class['class_number']
-        classes['classes'] = schedule['classes']
-        classes['last_updated'] = schedule['last_updated']
-        all_classes.append(classes)
+    class_schedule = get_class_schedule(db_class['class_number'])
+    all_classes.append(class_schedule)
 
   print(all_classes)
 
   # Update to database
   with db.connect() as conn:
     for class_ in all_classes:
-      class_times = class_['classes']
+      class_time = class_['classes'][0]
       current_year = class_['last_updated'].split('-')[0]
       class_number = class_['class_number']
-      for class_time in class_times:
-        date = class_time['date']
-        if date['weekdays']:
-          building = class_time['location']['building']
-          room = class_time['location']['room']
-          start_time = date['start_time']
-          end_time = date['end_time']
-          weekdays = date['weekdays']
+      date = class_time['date']
+      if date['weekdays']:
+        building = class_time['location']['building']
+        room = class_time['location']['room']
+        start_time = date['start_time']
+        end_time = date['end_time']
+        weekdays = date['weekdays']
 
-          # Populates Instructor table
-          instructor_id = None
-          if class_time['instructors']:
-            instructor_name = make_string_sql_safe(class_time['instructors'][0], '')
-            # If instructor exists, don't insert. Otherwise, insert
+        # Populates Instructor table
+        instructor_id = None
+        if class_time['instructors']:
+          instructor_name = make_string_sql_safe(class_time['instructors'][0], '')
+          # If instructor exists, don't insert. Otherwise, insert
+          instructor_id = conn.execute(
+              f"SELECT id FROM Instructor WHERE name = '{instructor_name}'"
+          ).first()
+          if instructor_id is None:
+            conn.execute(
+              f"INSERT INTO Instructor (name) VALUES ('{instructor_name}')"
+            )
             instructor_id = conn.execute(
-                f"SELECT id FROM Instructor WHERE name = '{instructor_name}'"
+              f"SELECT id FROM Instructor WHERE name = '{instructor_name}'"
             ).first()
-            if instructor_id is None:
-              conn.execute(
-                f"INSERT INTO Instructor (name) VALUES ('{instructor_name}')"
-              )
-              instructor_id = conn.execute(
-                f"SELECT id FROM Instructor WHERE name = '{instructor_name}'"
-              ).first()
-            instructor_id = f"'{instructor_id[0]}'"
-          else:
-            instructor_id = "NULL"
+          instructor_id = f"'{instructor_id[0]}'"
+        else:
+          instructor_id = "NULL"
 
-          # Not sure how to add null to datetime
-          default_date = '1900-01-01'
-          start_date = date['start_date'] or default_date
-          end_date = date['end_date'] or default_date
-          if start_date != default_date:
-            start_date = f"{current_year}-{start_date.replace('/', '-')}"
-          if end_date != default_date:
-            end_date = f"{current_year}-{end_date.replace('/', '-')}"
+        # Not sure how to add null to datetime
+        default_date = '1900-01-01'
+        start_date = date['start_date'] or default_date
+        end_date = date['end_date'] or default_date
+        if start_date != default_date:
+          start_date = f"{current_year}-{start_date.replace('/', '-')}"
+        if end_date != default_date:
+          end_date = f"{current_year}-{end_date.replace('/', '-')}"
 
-          is_active = not (date['is_tba'] and date['is_cancelled'] and date['is_closed'])
-          command = (
-            "INSERT INTO ClassTime (class_number, start_time, end_time, weekdays,"
-            "start_date, end_date, is_active, building, room, instructor_id) VALUES ( "
-            f"'{class_number}', '{start_time}', "
-            f"'{end_time}', '{weekdays}', '{start_date}', "
-            f"'{end_date}', '{is_active}', '{building}', "
-            f"'{room}', {instructor_id}) ON CONFLICT DO NOTHING; "
-          )
-          conn.execute(command)
+        is_active = not (date['is_tba'] and date['is_cancelled'] and date['is_closed'])
+        command = (
+          "INSERT INTO ClassTime (class_number, start_time, end_time, weekdays,"
+          "start_date, end_date, is_active, building, room, instructor_id) VALUES ( "
+          f"'{class_number}', '{start_time}', "
+          f"'{end_time}', '{weekdays}', '{start_date}', "
+          f"'{end_date}', '{is_active}', '{building}', "
+          f"'{room}', {instructor_id}); "
+        )
+        conn.execute(command)
 
   print("Sucessfully added all data")
 

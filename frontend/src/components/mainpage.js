@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Typography, TextField, Button, List, ListItem } from '@material-ui/core';
+import { Typography, TextField, Button, List, ListItem, Grid } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import axios from 'axios';
 import serverURL from '../config';
@@ -11,7 +11,7 @@ const useStyles = makeStyles(theme => ({
   button: {
     marginTop: theme.spacing(2),
     marginBottom: theme.spacing(2),
-  }
+  },
 }));
 
 function MainPage({ user }: props) {
@@ -62,10 +62,18 @@ function MainPage({ user }: props) {
       <List>
         {userClasses.map(c => {
           return (
-            <ListItem key={c.class_number}>
-              <Typography variant="body1" color="textPrimary" gutterBottom>
-                  {`${c.subject} ${c.catalog_number} ${c.class_type} ${c.section_number}`}
-              </Typography>
+            <ListItem component="div" key={c.id}>
+              <Grid>
+                <Typography component="div" variant="h6" color="textPrimary" gutterBottom>
+                  {`${c.subject} ${c.catalog_number} - ${c.class_type} ${c.section_number}`}
+                </Typography>
+                <Typography component="div" variant="body1" color="textPrimary" gutterBottom>
+                  {`${c.weekdays} ${c.start_time} ${c.end_time}`}
+                </Typography>
+                <Typography component="div" variant="body1" color="textPrimary" gutterBottom>
+                  {`${c.building} ${c.room}`}
+                </Typography>
+              </Grid>
             </ListItem>
           )
         })}

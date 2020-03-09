@@ -27,10 +27,10 @@ class Class(Resource):
     with db.connect() as conn:
       selected_classes = conn.execute(
         "SELECT * FROM Classtime LEFT JOIN "
-        "(SELECT Class.id AS class_id, Course.subject AS c_subject, Course.catalog_number AS c_catalog, *  "
+        "(SELECT Class.id AS class_number, Course.subject AS c_subject, Course.catalog_number AS c_catalog, *  "
         "FROM Class LEFT JOIN Course ON Course.subject = Class.subject AND Course.catalog_number = Class.catalog_number) "
         "AS CourseAndClass "
-        "ON CourseAndClass.class_id = ClassTime.class_id "
+        "ON CourseAndClass.class_number = ClassTime.class_number "
         f"WHERE weekdays LIKE '%{weekdays}%' AND c_subject LIKE '%{subject}%' AND c_catalog LIKE '%{catalog_number}%' "
         f"AND start_time >= '{from_time}' AND end_time <= '{to_time}'"
       )
@@ -39,7 +39,7 @@ class Class(Resource):
       result = []
       for selected_class in selected_classes:
         class_info = {
-          'id': selected_class['class_id'],
+          'id': selected_class['class_number'],
           'start_time': selected_class['start_time'].strftime("%H:%M:%S"),
           'end_time': selected_class['end_time'].strftime("%H:%M:%S"),
           'weekdays': selected_class['weekdays'],
@@ -109,16 +109,31 @@ class Schedule(Resource):
     data = request.json
     class_nums = extract_class_num(data["schedule"])
     with db.connect() as conn:
-      class_info_list = []
+      classes_list = []
       for class_num in class_nums:
-        class_info = conn.execute(
-            f'SELECT * FROM Class WHERE class_number = \'{class_num}\''
+        all_classes = conn.execute(
+          'SELECT Class.class_number AS class_nbr, *'
+          'FROM ClassTime LEFT JOIN Class ON Class.class_number = ClassTime.class_number '
+          f'WHERE ClassTime.class_number = \'{class_num}\''
         )
-        result = [dict(row) for row in class_info]
-        class_info_list.extend(result)
+        for class_info in all_classes:
+          class_info = {
+            'id': class_info['class_nbr'],
+            'start_time': class_info['start_time'].strftime("%H:%M:%S"),
+            'end_time': class_info['end_time'].strftime("%H:%M:%S"),
+            'weekdays': class_info['weekdays'],
+            'building': class_info['building'],
+            'room': class_info['room'],
+            'subject': class_info['subject'],
+            'catalog_number': class_info['catalog_number'],
+            'class_type': class_info['class_type'],
+            'topic': class_info['topic'],
+            'section_number': class_info['section_number'],
+          }
+          classes_list.append(class_info)
 
       conn.close()
-      return {'classes': class_info_list}
+      return {'classes': classes_list}
 
 
 class CoursesTaken(Resource):
