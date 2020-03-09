@@ -128,7 +128,7 @@ def populate_classtime(db):
         classes['last_updated'] = schedule['last_updated']
         all_classes.append(classes)
 
-  # print(all_classes)
+  print(all_classes)
 
   # Update to database
   with db.connect() as conn:

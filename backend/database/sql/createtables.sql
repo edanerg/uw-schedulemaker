@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS ClassTime (
     is_active BOOLEAN NOT NULL DEFAULT TRUE, -- true if is_tba, is_cancelled, and is_closed are all false
     building VARCHAR(10) NOT NULL,
     room VARCHAR(10) NOT NULL,
-    instructor_id INTEGER REFERENCES Instructor(id);
+    instructor_id INTEGER REFERENCES Instructor(id) ON DELETE CASCADE ON UPDATE CASCADE;
 );
 
 -- AppUser --
