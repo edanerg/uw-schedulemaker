@@ -31,10 +31,10 @@ function CoursesList({ courses } : props) {
                             {c.description}
                         </Typography>
                         <Typography variant="body1" color="textSecondary">
-                            {`Prerequisites : ${c.prerequisites}`}
+                            {c.prerequisites && `Prerequisites : ${c.prerequisites}`}
                         </Typography>
                         <Typography variant="body1" color="textSecondary">
-                             {`Antirequisites : ${c.antirequisites}`}
+                             {c.antirequisites && `Antirequisites : ${c.antirequisites}`}
                         </Typography>
                     </CardContent>
                 </Card>
