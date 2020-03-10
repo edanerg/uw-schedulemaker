@@ -25,11 +25,13 @@ Ana:
 - Allow user can view their schedule on the Main page whenever they log in again
 - Move all sql-related query functions to db_functions.py
 
-
-
 Cheng Keat Chong: 
+(Milestone 0 and 1)
 - Wrote up report.pdf
 - Wrote script to grab data from Waterloo API to populate the SQL Course table for local database
+(Milestone 2)
+- Created parser for user's uploaded schedule
+- Modified User table and added UserSchedule table to store user's schedule
 
 Yuetong Wang:
 - created git repo and add front-end code.
