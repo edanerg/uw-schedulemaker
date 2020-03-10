@@ -9,12 +9,23 @@ Sunny:
 - Created test-production.sql and test-production.out
 
 Ana:
+(Milestone 0 and 1)
 - Set up frontend and backend project.
 - Created Rest APIs on the backend using python3 so that the frontend can fetch info through API requests.
 - Used sqlAlchemy to connect to SQL instance in GCP. 
 - Write script grab data from Waterloo API to populate the SQL Class and Classtime table for local database.
 - Show course descriptions for the frontend page.
 - Add menu that allows user to go to the course or class page.
+(Milestone 2)
+- Update table schema
+- Add the '/schedule' route for the backend API. 
+- Add Main page component in the frontend app. User can paste their schedule and the app posts it to backend using the '<backend_url>/schedule' route
+- Store user schedule in the UserSchedule table (i.e the class_numbers of classes the user took).
+- Add new function that retrieves class info and schedule from Waterloo API using class_numbers
+- Allow user can view their schedule on the Main page whenever they log in again
+- Move all sql-related query functions to db_functions.py
+
+
 
 Cheng Keat Chong: 
 - Wrote up report.pdf
