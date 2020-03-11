@@ -77,13 +77,16 @@ def user_profile_actions(data):
   elif data['action'] == 'signup':
     with db.connect() as conn:
       username = data["username"]
+      for c in username:
+        if not ('a' <= c <= 'z' or 'A' <= c <= 'Z'):
+          return {'result': 'ERROR: username should consist of only lowercase or uppercase letters'}
       academic_level = data["academic_level"] if "academic_level" in data else "undergrad"
       try:
         conn.execute(f'INSERT INTO AppUser (username, academic_level) VALUES (\'{username}\', \'{academic_level}\')')
       except:
         print("problem occured")
         conn.close()
-        return {'result': 'ERROR user already exists'}
+        return {'result': 'ERROR: user already exists'}
       print(f"User {data['username']} signing up")
       conn.close()
       return {'result': 'success'}
