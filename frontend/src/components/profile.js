@@ -51,6 +51,7 @@ function Profile({user, coursesTaken, setCoursesTaken}) {
   return (
     <div style={{display: "flex", flexDirection: "column", justifyContent: "flex-start", alignItems: "start"}}>
       <div style={{fontSize: "40px", marginBottom: "5px"}}>{user.username}</div>
+      <div style={{fontSize: "20px", marginBottom: "5px"}}>{user.academic_level}</div>
       <div style={{fontSize: "30px", marginBottom: "20px"}}>Courses Taken</div>
       <CoursesList courses={coursesTaken}/>
       <div>
