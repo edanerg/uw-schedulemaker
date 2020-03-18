@@ -1,29 +1,25 @@
-Team members: Cheng Keat Chong, Anael Wan, Alex Wang, Sunny Yang
+Team members: Cheng Keat Chong, Anael Wan, Yuetong Wang, Sunny Yang
 
 Description of Work
 
 Sunny:
-- created database schema
-- wrote sql queries for creating tables and populating with sample data
-- created E/R diagram for Course, Instructor, Class, ClassTime, InstructorClassTime, and Reserve
-- created page at /courses, where user can view all UW courses and filter by subject or course code
-    - this includes the SQL queries for selecting courses
-- created test-sample.sql and test-sample.out
+- Wrote report.pdf
+- Updated E/R diagram to reflect schema changes
+- Added instructor processing when grabbing data for classes
+- Created test-production.sql and test-production.out
 
 Ana:
-- Set up frontend and backend project.
-- Created Rest APIs on the backend using python3 so that the frontend can fetch info through API requests.
-- Used sqlAlchemy to connect to SQL instance in GCP. 
-- Write script grab data from Waterloo API to populate the SQL Class and Classtime table for local database.
-- Show course descriptions for the frontend page.
-- Add menu that allows user to go to the course or class page.
+- Update table schema
+- Add the '/schedule' route for the backend API. 
+- Add Main page component in the frontend app. User can paste their schedule and the app posts it to backend using the '<backend_url>/schedule' route
+- Store user schedule in the UserSchedule table (i.e the class_numbers of classes the user took).
+- Add new function that retrieves class info and schedule from Waterloo API using class_numbers
+- Allow user can view their schedule on the Main page whenever they log in again
+- Move all sql-related query functions to db_functions.py
 
 Cheng Keat Chong: 
-- Wrote up report.pdf
-- Wrote script to grab data from Waterloo API to populate the SQL Course table for local database
+- Created parser for user's uploaded schedule
+- Modified User table and added UserSchedule table to store user's schedule
 
 Yuetong Wang:
-- created git repo and add front-end code.
-- create AppUser table and CoursesTaken table and added the corresponding backend endpoints
-- create user login frontEnd page
-- create the E/R diagram for AppUser and CoursesTaken
+- created user profile page and corresponding backend for user to uploaded taken courses

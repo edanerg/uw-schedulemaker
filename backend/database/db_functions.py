@@ -13,10 +13,12 @@ def get_filtered_classes(from_time, to_time, weekdays, subject, catalog_number):
   with db.connect() as conn:
     selected_classes = conn.execute(
       "SELECT * FROM Classtime LEFT JOIN "
-      "(SELECT Class.class_number AS class_num, Course.subject AS c_subject, Course.catalog_number AS c_catalog, *  "
+      "(SELECT Class.class_number AS class_num, Course.subject AS c_subject, Course.catalog_number AS c_catalog, "
+      "Class.units AS units, Class.class_type AS class_type, Class.section_number AS section_number, "
+      "Course.description AS description, Course.name AS name "
       "FROM Class LEFT JOIN Course ON Course.subject = Class.subject AND Course.catalog_number = Class.catalog_number) "
       "AS CourseAndClass "
-      "ON CourseAndClass.class_number = ClassTime.class_number "
+      "ON CourseAndClass.class_num = ClassTime.class_number "
       f"WHERE weekdays LIKE '%{weekdays}%' AND c_subject LIKE '%{subject}%' AND c_catalog LIKE '%{catalog_number}%' "
       f"AND start_time >= '{from_time}' AND end_time <= '{to_time}'"
     )
@@ -29,8 +31,8 @@ def get_filtered_classes(from_time, to_time, weekdays, subject, catalog_number):
         'is_active': selected_class['is_active'],
         'building': selected_class['building'],
         'room': selected_class['room'],
-        'subject': selected_class['subject'],
-        'catalog_number': selected_class['catalog_number'],
+        'subject': selected_class['c_subject'],
+        'catalog_number': selected_class['c_catalog'],
         'units': selected_class['units'],
         'class_number': selected_class['class_num'],
         'class_type': selected_class['class_type'],
@@ -74,7 +76,17 @@ def user_profile_actions(data):
 
   elif data['action'] == 'signup':
     with db.connect() as conn:
-      conn.execute(f'INSERT INTO AppUser (username) VALUES (\'{data["username"]}\')')
+      username = data["username"]
+      for c in username:
+        if not ('a' <= c <= 'z' or 'A' <= c <= 'Z'):
+          return {'result': 'ERROR: username should consist of only lowercase or uppercase letters'}
+      academic_level = data["academic_level"] if "academic_level" in data else "undergrad"
+      try:
+        conn.execute(f'INSERT INTO AppUser (username, academic_level) VALUES (\'{username}\', \'{academic_level}\')')
+      except:
+        print("problem occured")
+        conn.close()
+        return {'result': 'ERROR: user already exists'}
       print(f"User {data['username']} signing up")
       conn.close()
       return {'result': 'success'}

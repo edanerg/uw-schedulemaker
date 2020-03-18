@@ -6,13 +6,18 @@ import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
+import MenuItem from '@material-ui/core/MenuItem';
+import InputLabel from '@material-ui/core/InputLabel';
+import FormControl from '@material-ui/core/FormControl';
 import axios from 'axios';
 import serverURL from '../config';
 import { useHistory } from "react-router-dom";
+import Select from '@material-ui/core/Select';
 
 function Login({ setUser, setCoursesTaken, }: props) {
     const [action, setAction] = useState("Log In");
     const [username, setUsername] = useState(null);
+    const [academicLevel, setAcademicLevel] = useState("undergrad");
     const [usernameInvalid, setUsernameInvalid] = useState(false);
     const [helperText, setHelperText] = useState(null);
     const history = useHistory();
@@ -50,7 +55,17 @@ function Login({ setUser, setCoursesTaken, }: props) {
         } else if (!usernameInvalid) {
             axios.post(`${serverURL}/user`, {
                 action: "signup",
-                username: username
+                username: username,
+                academic_level: academicLevel || "undergrad"
+            })
+            .then(res => {
+                if (res.data.result == 'success'){
+                    setUser({username, academic_level: academicLevel})
+                    setCoursesTaken([])
+                    history.push('/');
+                } else {
+                    setHelperText(res.data.result)
+                }
             })
             .catch(e => console.log(e))
         }
@@ -80,7 +95,15 @@ function Login({ setUser, setCoursesTaken, }: props) {
                     <TextField id="user-name" label="Username" style={{marginBottom: "30px", width: "100%"}} onChange={onUsernameChange}
                     error={usernameInvalid} helperText={helperText}
                     />
-                    {/* <TextField id="password" label="Password" style={{marginBottom: "30px", width: "100%"}}/> */}
+                    {action == "Sign Up" ? (
+                        <FormControl style={{marginBottom: "30px", width: "100%"}}>
+                            <InputLabel id="academic_level">Academic Level</InputLabel>
+                            <Select id="academic_level" labelId="academic_level" value={academicLevel} onChange={event => setAcademicLevel(event.target.value)}>
+                                <MenuItem value={"undergrad"}>Undergrad</MenuItem>
+                                <MenuItem value={"grad"}>Grad</MenuItem>
+                            </Select>
+                        </FormControl>
+                    ) : null}
                     <CardActions>
                         <Button variant="contained" color="primary" onClick={onExecuteAction}>{action}</Button>
                     </CardActions>
