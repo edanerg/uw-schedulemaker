@@ -185,9 +185,9 @@ def get_class_schedule(class_numbers):
   with db.connect() as conn:
     for class_num in class_numbers:
       all_classes = conn.execute(
-          'SELECT Class.class_number AS class_nbr, * '
-          'FROM ClassTime LEFT JOIN Class ON Class.class_number = ClassTime.class_number '
-          f'WHERE ClassTime.class_number = \'{class_num}\''
+          "SELECT Class.class_number AS class_nbr, * "
+          "FROM ClassTime LEFT JOIN Class ON Class.class_number = ClassTime.class_number "
+          f"WHERE ClassTime.class_number = '{class_num}'; "
       )
       for class_info in all_classes:
         class_info = {
@@ -214,7 +214,8 @@ def add_user_schedule(username, class_numbers):
   with db.connect() as conn:
     for class_num in class_numbers:
       conn.execute(
-          f"INSERT INTO UserSchedule VALUES ('{username}', '{class_num}') ON CONFLICT DO NOTHING;"
+          f"INSERT INTO UserSchedule VALUES ('{username}', '{class_num}') "
+          f"WHERE EXISTS (SELECT * FROM Class WHERE class_number ='{class_num}') ON CONFLICT DO NOTHING; "
       )
     
     conn.close()
