@@ -177,6 +177,7 @@ def get_users_classnums(username):
     conn.close()
   return user_class_nums
 
+
 def get_class_schedule(class_numbers):
   """
     Returns the class schedules using list of class_numbers
@@ -207,6 +208,37 @@ def get_class_schedule(class_numbers):
     conn.close()
   return classes_list
 
+ 
+def get_classes_user_can_add(username):
+  """
+    Returns the classes that fits into the user's schedule
+  """
+  classes_list = []
+  with db.connect() as conn:
+
+    ########## Work in progress ** #########
+    available_classes = conn.execute(
+      # "WITH RECURSIVE get_available_classes AS ( "
+      # "(SELECT ClassTime.class_number as class_nbr, weekdays "
+      # "FROM UserSchedule LEFT JOIN ClassTime ON UserSchedule.class_number = ClassTime.class_number "
+      # f"WHERE username = '{username}') "
+      # "UNION "
+      # "( SELECT class_nbr, weekdays FROM get_available_classes, ClassTime "
+      # "WHERE '%get_available_classes.weekdays%' NOT LIKE '%ClassTime.weekdays%' "
+      # ")) SELECT * FROM get_available_classes; "
+      "SELECT ClassTime.weekdays "
+      "FROM ClassTime, (SELECT ClassTime.class_number as class_nbr, weekdays "
+      "FROM UserSchedule LEFT JOIN ClassTime ON UserSchedule.class_number = ClassTime.class_number "
+      f"WHERE username = '{username}') AS c "
+      f"WHERE ClassTime.weekdays NOT LIKE '%' || c.weekdays || '%'; "
+    )
+    conn.close()
+
+    test = [dict(row) for row in available_classes]
+    print(test)
+  return {'classes': "aa"}
+
+
 def add_user_schedule(username, class_numbers):
   """
     add to UserSchedule table
@@ -214,8 +246,9 @@ def add_user_schedule(username, class_numbers):
   with db.connect() as conn:
     for class_num in class_numbers:
       conn.execute(
-          f"INSERT INTO UserSchedule VALUES ('{username}', '{class_num}') "
-          f"WHERE EXISTS (SELECT * FROM Class WHERE class_number ='{class_num}') ON CONFLICT DO NOTHING; "
+        f"INSERT INTO UserSchedule SELECT '{username}', '{class_num}' "
+        f"WHERE EXISTS (SELECT 1 FROM Class WHERE class_number = '{class_num}') "
+        f"ON CONFLICT (username, class_number) DO NOTHING;"
       )
     
     conn.close()
