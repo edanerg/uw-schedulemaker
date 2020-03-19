@@ -208,35 +208,48 @@ def get_class_schedule(class_numbers):
     conn.close()
   return classes_list
 
- 
+
 def get_classes_user_can_add(username):
   """
     Returns the classes that fits into the user's schedule
   """
-  classes_list = []
+  addable_classes = []
   with db.connect() as conn:
-
-    ########## Work in progress ** #########
-    available_classes = conn.execute(
-      # "WITH RECURSIVE get_available_classes AS ( "
-      # "(SELECT ClassTime.class_number as class_nbr, weekdays "
-      # "FROM UserSchedule LEFT JOIN ClassTime ON UserSchedule.class_number = ClassTime.class_number "
-      # f"WHERE username = '{username}') "
-      # "UNION "
-      # "( SELECT class_nbr, weekdays FROM get_available_classes, ClassTime "
-      # "WHERE '%get_available_classes.weekdays%' NOT LIKE '%ClassTime.weekdays%' "
-      # ")) SELECT * FROM get_available_classes; "
-      "SELECT ClassTime.weekdays "
-      "FROM ClassTime, (SELECT ClassTime.class_number as class_nbr, weekdays "
+    class_times_info = conn.execute(
+      "SELECT weekdays, start_time, end_time "
       "FROM UserSchedule LEFT JOIN ClassTime ON UserSchedule.class_number = ClassTime.class_number "
-      f"WHERE username = '{username}') AS c "
-      f"WHERE ClassTime.weekdays NOT LIKE '%' || c.weekdays || '%'; "
+      f"WHERE username = '{username}';"
     )
-    conn.close()
+    
+    class_times_info = [{
+      'start_time': row['start_time'].strftime("%H:%M:%S"),
+      'end_time': row['end_time'].strftime("%H:%M:%S"),
+      'weekdays': row['weekdays'],
+    } for row in class_times_info]
 
-    test = [dict(row) for row in available_classes]
-    print(test)
-  return {'classes': "aa"}
+    query = ""
+    i = 0
+    for class_time_info in class_times_info:
+      weekday = class_time_info['weekdays']
+      start_time = class_time_info['start_time']
+      end_time = class_time_info['end_time']
+
+      if i != 0:
+        query += "AND "
+      query += f"(('{weekday}' NOT LIKE '%' || ClassTime.weekdays || '%' AND ClassTime.weekdays NOT LIKE '%{weekday}%') OR "
+      query += f"((ClassTime.end_time < '{start_time}' OR ClassTime.start_time > '{end_time}'))) "
+      
+      i += 1
+    
+    addable_classes_query = conn.execute(
+      "SELECT class_number "
+      "FROM ClassTime "
+      f"WHERE {query}"
+    )
+
+    addable_classes = [dict(row)['class_number'] for row in addable_classes_query]
+    conn.close()
+  return addable_classes
 
 
 def add_user_schedule(username, class_numbers):

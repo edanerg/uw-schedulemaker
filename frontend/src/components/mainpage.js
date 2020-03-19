@@ -18,6 +18,7 @@ function MainPage({ user }: props) {
   const classes = useStyles();
   const [pastedSchedule, setPastedSchedule] = useState('');
   const [userClasses, setUserClasses] = useState([]);
+  const [addableClasses, setAddableClasses] = useState([]);
 
   const uploadSchedule = () => {
     axios.post(`${serverURL}/schedule`, {
@@ -30,7 +31,10 @@ function MainPage({ user }: props) {
   useEffect(() => {
     axios.get(`${serverURL}/schedule`, {params: 
       {username: user ? user.username : ''}
-    }).then(res => setUserClasses(res.data.schedule));
+    }).then(res => {
+      setAddableClasses(res.data.addable_classes)
+      setUserClasses(res.data.schedule)
+    });
   }, [user])
 
   return (
@@ -84,9 +88,25 @@ function MainPage({ user }: props) {
       <Typography variant="h5" gutterBottom>
         List of Classes that fit your schedule:
       </Typography>
-      <Typography variant="body1" gutterBottom>
-        (TO BE IMPLEMENTED)
-      </Typography>
+      <List>
+        {addableClasses.map(c => {
+          return (
+            <ListItem component="div" key={c.id}>
+              <Grid>
+                <Typography component="div" variant="h6" color="textPrimary" gutterBottom>
+                  {`${c.subject} ${c.catalog_number} - ${c.class_type} ${c.section_number}`}
+                </Typography>
+                <Typography component="div" variant="body1" color="textPrimary" gutterBottom>
+                  {`${c.weekdays} ${c.start_time} ${c.end_time}`}
+                </Typography>
+                <Typography component="div" variant="body1" color="textPrimary" gutterBottom>
+                  {`${c.building} ${c.room}`}
+                </Typography>
+              </Grid>
+            </ListItem>
+          )
+        })}
+      </List>
     </>
   )
 }

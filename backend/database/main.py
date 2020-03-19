@@ -53,9 +53,13 @@ class Schedule(Resource):
     username = request.args.get('username') or ''
     user_class_nums = get_users_classnums(username)
     class_schedule_list = get_class_schedule(user_class_nums)
-    get_classes_user_can_add(username)
+
+    addable_classes_num = get_classes_user_can_add(username)
+    addable_classes_schedule = get_class_schedule(addable_classes_num)
+
+    print(addable_classes_schedule)
     
-    return {'schedule': class_schedule_list}
+    return {'schedule': class_schedule_list, 'addable_classes': addable_classes_schedule}
 
   def post(self):
     data = request.json
