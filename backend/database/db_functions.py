@@ -203,6 +203,7 @@ def get_class_schedule(class_numbers):
             'class_type': class_info['class_type'],
             'topic': class_info['topic'],
             'section_number': class_info['section_number'],
+            'academic_level': class_info['academic_level'],
         }
         classes_list.append(class_info)
     conn.close()
@@ -211,7 +212,7 @@ def get_class_schedule(class_numbers):
 
 def get_classes_user_can_add(username):
   """
-    Returns the classes that fits into the user's schedule
+    Returns the class numbers of classes that fits into the user's schedule
   """
   addable_classes = []
   with db.connect() as conn:
@@ -220,7 +221,13 @@ def get_classes_user_can_add(username):
       "FROM UserSchedule LEFT JOIN ClassTime ON UserSchedule.class_number = ClassTime.class_number "
       f"WHERE username = '{username}';"
     )
+    #get user's academic level
+    user_info = conn.execute(
+      f"SELECT academic_level FROM AppUser WHERE username = '{username}';"
+    )
+    academic_level = [dict(row)['academic_level'] for row in user_info][0]
     
+    # get user's classes' days and times
     class_times_info = [{
       'start_time': row['start_time'].strftime("%H:%M:%S"),
       'end_time': row['end_time'].strftime("%H:%M:%S"),
@@ -228,26 +235,20 @@ def get_classes_user_can_add(username):
     } for row in class_times_info]
 
     query = ""
-    i = 0
     for class_time_info in class_times_info:
       weekday = class_time_info['weekdays']
       start_time = class_time_info['start_time']
       end_time = class_time_info['end_time']
-
-      if i != 0:
-        query += "AND "
       query += f"(('{weekday}' NOT LIKE '%' || ClassTime.weekdays || '%' AND ClassTime.weekdays NOT LIKE '%{weekday}%') OR "
-      query += f"((ClassTime.end_time < '{start_time}' OR ClassTime.start_time > '{end_time}'))) "
-      
-      i += 1
+      query += f"((ClassTime.end_time < '{start_time}' OR ClassTime.start_time > '{end_time}'))) AND "
     
     addable_classes_query = conn.execute(
-      "SELECT class_number "
-      "FROM ClassTime "
-      f"WHERE {query}"
+      "SELECT ClassTime.class_number as class_nbr "
+      "FROM ClassTime LEFT JOIN Class ON ClassTime.class_number = Class.class_number "
+      f"WHERE {query} academic_level = '{academic_level}'; "
     )
 
-    addable_classes = [dict(row)['class_number'] for row in addable_classes_query]
+    addable_classes = [dict(row)['class_nbr'] for row in addable_classes_query]
     conn.close()
   return addable_classes
 

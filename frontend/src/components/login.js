@@ -17,7 +17,7 @@ import Select from '@material-ui/core/Select';
 function Login({ setUser, setCoursesTaken, }: props) {
     const [action, setAction] = useState("Log In");
     const [username, setUsername] = useState(null);
-    const [academicLevel, setAcademicLevel] = useState("undergrad");
+    const [academicLevel, setAcademicLevel] = useState("undergraduate");
     const [usernameInvalid, setUsernameInvalid] = useState(false);
     const [helperText, setHelperText] = useState(null);
     const history = useHistory();
@@ -56,7 +56,7 @@ function Login({ setUser, setCoursesTaken, }: props) {
             axios.post(`${serverURL}/user`, {
                 action: "signup",
                 username: username,
-                academic_level: academicLevel || "undergrad"
+                academic_level: academicLevel || "undergraduate"
             })
             .then(res => {
                 if (res.data.result == 'success'){
@@ -99,7 +99,7 @@ function Login({ setUser, setCoursesTaken, }: props) {
                         <FormControl style={{marginBottom: "30px", width: "100%"}}>
                             <InputLabel id="academic_level">Academic Level</InputLabel>
                             <Select id="academic_level" labelId="academic_level" value={academicLevel} onChange={event => setAcademicLevel(event.target.value)}>
-                                <MenuItem value={"undergrad"}>Undergrad</MenuItem>
+                                <MenuItem value={"undergraduate"}>Undergraduate</MenuItem>
                                 <MenuItem value={"grad"}>Grad</MenuItem>
                             </Select>
                         </FormControl>

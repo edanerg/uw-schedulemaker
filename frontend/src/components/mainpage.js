@@ -16,6 +16,7 @@ const useStyles = makeStyles(theme => ({
 
 function MainPage({ user }: props) {
   const classes = useStyles();
+  const [serverResponse, setServerResponse] = useState('');
   const [pastedSchedule, setPastedSchedule] = useState('');
   const [userClasses, setUserClasses] = useState([]);
   const [addableClasses, setAddableClasses] = useState([]);
@@ -25,17 +26,17 @@ function MainPage({ user }: props) {
       schedule: pastedSchedule,
       username: user ? user.username : '',
     })
-    .then(res => setUserClasses(res.data.classes));
+    .then(res => setServerResponse(res.data.result));
   };
 
   useEffect(() => {
     axios.get(`${serverURL}/schedule`, {params: 
       {username: user ? user.username : ''}
     }).then(res => {
-      setAddableClasses(res.data.addable_classes)
+      if (user) setAddableClasses(res.data.addable_classes)
       setUserClasses(res.data.schedule)
     });
-  }, [user])
+  }, [user, serverResponse])
 
   return (
     <>

@@ -54,10 +54,10 @@ class Schedule(Resource):
     user_class_nums = get_users_classnums(username)
     class_schedule_list = get_class_schedule(user_class_nums)
 
-    addable_classes_num = get_classes_user_can_add(username)
-    addable_classes_schedule = get_class_schedule(addable_classes_num)
-
-    print(addable_classes_schedule)
+    addable_classes_schedule = []
+    if username:
+      addable_classes_num = get_classes_user_can_add(username)
+      addable_classes_schedule = get_class_schedule(addable_classes_num)
     
     return {'schedule': class_schedule_list, 'addable_classes': addable_classes_schedule}
 
@@ -68,10 +68,8 @@ class Schedule(Resource):
 
     if username and class_numbers:
       add_user_schedule(username, class_numbers)
-    
-    class_schedule_list = get_class_schedule(class_numbers)
 
-    return {'classes': class_schedule_list}
+    return {'result': 'success'}
 
 
 class CoursesTaken(Resource):
