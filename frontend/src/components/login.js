@@ -44,7 +44,7 @@ function Login({ setUser, setCoursesTaken, }: props) {
                     .then(res => {
                         console.log(res);
                         setCoursesTaken(res.data.courses);
-                        history.push('/profile');
+                        history.push('/');
                     })
                 } else {
                     setUsernameInvalid(true);
@@ -62,7 +62,7 @@ function Login({ setUser, setCoursesTaken, }: props) {
                 if (res.data.result == 'success'){
                     setUser({username, academic_level: academicLevel})
                     setCoursesTaken([])
-                    history.push('/profile');
+                    history.push('/');
                 } else {
                     setHelperText(res.data.result)
                 }
