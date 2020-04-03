@@ -121,51 +121,51 @@ def populate_classtime(db):
       current_year = class_['last_updated'].split('-')[0]
       class_number = class_['class_number']
       date = class_time['date']
-      if date['weekdays']:
-        building = class_time['location']['building']
-        room = class_time['location']['room']
-        start_time = date['start_time']
-        end_time = date['end_time']
-        weekdays = date['weekdays']
+      
+      building = class_time['location']['building']
+      room = class_time['location']['room']
+      start_time = date['start_time']
+      end_time = date['end_time']
+      weekdays = date['weekdays']
 
-        # Populates Instructor table
-        instructor_id = None
-        if class_time['instructors']:
-          instructor_name = make_string_sql_safe(class_time['instructors'][0], '')
-          # If instructor exists, don't insert. Otherwise, insert
+      # Populates Instructor table
+      instructor_id = None
+      if class_time['instructors']:
+        instructor_name = make_string_sql_safe(class_time['instructors'][0], '')
+        # If instructor exists, don't insert. Otherwise, insert
+        instructor_id = conn.execute(
+            f"SELECT id FROM Instructor WHERE name = '{instructor_name}'"
+        ).first()
+        if instructor_id is None:
+          conn.execute(
+            f"INSERT INTO Instructor (name) VALUES ('{instructor_name}')"
+          )
           instructor_id = conn.execute(
-              f"SELECT id FROM Instructor WHERE name = '{instructor_name}'"
+            f"SELECT id FROM Instructor WHERE name = '{instructor_name}'"
           ).first()
-          if instructor_id is None:
-            conn.execute(
-              f"INSERT INTO Instructor (name) VALUES ('{instructor_name}')"
-            )
-            instructor_id = conn.execute(
-              f"SELECT id FROM Instructor WHERE name = '{instructor_name}'"
-            ).first()
-          instructor_id = f"'{instructor_id[0]}'"
-        else:
-          instructor_id = "NULL"
+        instructor_id = f"'{instructor_id[0]}'"
+      else:
+        instructor_id = "NULL"
 
-        # Not sure how to add null to datetime
-        default_date = '1900-01-01'
-        start_date = date['start_date'] or default_date
-        end_date = date['end_date'] or default_date
-        if start_date != default_date:
-          start_date = f"{current_year}-{start_date.replace('/', '-')}"
-        if end_date != default_date:
-          end_date = f"{current_year}-{end_date.replace('/', '-')}"
+      # Not sure how to add null to datetime
+      default_date = '1900-01-01'
+      start_date = date['start_date'] or default_date
+      end_date = date['end_date'] or default_date
+      if start_date != default_date:
+        start_date = f"{current_year}-{start_date.replace('/', '-')}"
+      if end_date != default_date:
+        end_date = f"{current_year}-{end_date.replace('/', '-')}"
 
-        is_active = not (date['is_cancelled'] and date['is_closed'])
-        command = (
-          "INSERT INTO ClassTime (class_number, start_time, end_time, weekdays,"
-          "start_date, end_date, is_active, building, room, instructor_id) VALUES ( "
-          f"'{class_number}', '{start_time}', "
-          f"'{end_time}', '{weekdays}', '{start_date}', "
-          f"'{end_date}', '{is_active}', '{building}', "
-          f"'{room}', {instructor_id}); "
-        )
-        conn.execute(command)
+      is_active = not (date['is_tba'] and date['is_cancelled'] and date['is_closed'])
+      command = (
+        "INSERT INTO ClassTime (class_number, start_time, end_time, weekdays,"
+        "start_date, end_date, is_active, building, room, instructor_id) VALUES ( "
+        f"'{class_number}', '{start_time}', "
+        f"'{end_time}', '{weekdays}', '{start_date}', "
+        f"'{end_date}', '{is_active}', '{building}', "
+        f"'{room}', {instructor_id}); "
+      )
+      conn.execute(command)
 
   print("Sucessfully added all data")
 
