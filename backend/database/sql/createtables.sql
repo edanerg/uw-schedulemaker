@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS ClassTime (
     class_number INTEGER NOT NULL REFERENCES Class(class_number) ON DELETE CASCADE ON UPDATE CASCADE,
     start_time TIME NOT NULL, -- format: 'hh:mm:ss', stored in 24-hour EST
     end_time TIME NOT NULL,
-    weekdays VARCHAR(10) NOT NULL, -- M,T,W,Th,F,Sa,Su
+    weekdays VARCHAR(10), -- M,T,W,Th,F,Sa,Su
     start_date DATE,
     end_date DATE,
     is_active BOOLEAN NOT NULL DEFAULT TRUE, -- true if is_tba, is_cancelled, and is_closed are all false

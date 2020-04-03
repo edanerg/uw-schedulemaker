@@ -17,6 +17,7 @@ def populate_courses(db):
     Grabs Course description at /course/{course_id}
   """
   courses = get_all_courses()
+
   with db.connect() as conn:
     for course in courses:
       course_id = course['course_id']
@@ -124,9 +125,9 @@ def populate_classtime(db):
       
       building = class_time['location']['building']
       room = class_time['location']['room']
-      start_time = date['start_time']
-      end_time = date['end_time']
-      weekdays = date['weekdays']
+      start_time = date['start_time'] or "00:00:00"
+      end_time = date['end_time'] or "00:00:00"
+      weekdays = date['weekdays'] or "NULL"
 
       # Populates Instructor table
       instructor_id = None

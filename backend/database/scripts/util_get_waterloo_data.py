@@ -30,6 +30,8 @@ def get_all_courses():
   r = requests.get(
     'https://api.uwaterloo.ca/v2/codes/subjects.json', params=params)
   all_subjects = r.json()['data']
+  # all_subjects = [{"subject": "STAT", "description": "Statistics",
+  #                  "unit": "STATACTSC", "group": "MAT"}]
 
   # grabs 10 courses for each subject
   all_courses = []
