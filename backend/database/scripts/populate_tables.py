@@ -156,7 +156,7 @@ def populate_classtime(db):
         if end_date != default_date:
           end_date = f"{current_year}-{end_date.replace('/', '-')}"
 
-        is_active = not (date['is_tba'] and date['is_cancelled'] and date['is_closed'])
+        is_active = not (date['is_cancelled'] and date['is_closed'])
         command = (
           "INSERT INTO ClassTime (class_number, start_time, end_time, weekdays,"
           "start_date, end_date, is_active, building, room, instructor_id) VALUES ( "

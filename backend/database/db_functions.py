@@ -161,6 +161,7 @@ def extract_class_num(user_schedule):
   print(list_class_num)
   return list_class_num
 
+
 def get_users_classnums(username):
   """
     Returns all the class_numbers for classes that in the user's schedule
