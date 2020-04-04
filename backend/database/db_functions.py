@@ -267,3 +267,31 @@ def add_user_schedule(username, class_numbers):
       )
     
     conn.close()
+
+
+def get_instructor_classes(instructor_name):
+  with db.connect() as conn:
+    classes = conn.execute(
+      "SELECT Class.class_number AS class_nbr, * "
+      "FROM Instructor, ClassTime, Class "
+      f"WHERE Instructor.name LIKE '%{instructor_name}%' and ClassTime.instructor_id = Instructor.id and ClassTime.class_number = Class.class_number "
+    )
+    classes_list = []
+    for class_info in classes:
+      class_info = {
+        'id': class_info['class_nbr'],
+        'start_time': class_info['start_time'].strftime("%H:%M:%S"),
+        'end_time': class_info['end_time'].strftime("%H:%M:%S"),
+        'weekdays': class_info['weekdays'],
+        'building': class_info['building'],
+        'room': class_info['room'],
+        'subject': class_info['subject'],
+        'catalog_number': class_info['catalog_number'],
+        'class_type': class_info['class_type'],
+        'topic': class_info['topic'],
+        'section_number': class_info['section_number'],
+        'academic_level': class_info['academic_level'],
+      }
+      classes_list.append(class_info)
+    conn.close()
+  return classes_list;

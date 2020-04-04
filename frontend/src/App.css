@@ -5,6 +5,7 @@
 .app-body {
   text-align: left;
   display: inline-block;
+  width: 80%;
   margin-left: 60px;
   margin-right: 60px;
   margin-top: 30px;

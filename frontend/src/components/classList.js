@@ -26,7 +26,7 @@ function ClassList({ classes }: props) {
                     onMouseLeave={mouseExit}>
                     <CardContent>
                         <Typography variant="h5" color="textPrimary">
-                            {`${c.subject} ${c.catalog_number} ${c.name}`}
+                            {`${c.subject} ${c.catalog_number} ${c.name || ""}`}
                         </Typography>
                         <Typography variant="h5" color="textSecondary">
                             {`${c.weekdays} ${c.start_time}-${c.end_time}`}

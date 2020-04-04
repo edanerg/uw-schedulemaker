@@ -91,6 +91,11 @@ class CoursesTaken(Resource):
     result = delete_course_taken(username, subject, catalog_number)
     return result
 
+class Instructor(Resource):
+  def get(self):
+    instructor = request.args.get('instructor')
+    result = get_instructor_classes(instructor)
+    return {'classes': result}
 
 class Main(Resource):
   """
@@ -106,3 +111,4 @@ api.add_resource(Courses, '/courses')
 api.add_resource(User, '/user')
 api.add_resource(CoursesTaken, '/coursesTaken')
 api.add_resource(Class, '/class')
+api.add_resource(Instructor, '/instructor')

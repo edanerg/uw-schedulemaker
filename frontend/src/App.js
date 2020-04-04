@@ -3,6 +3,7 @@ import ClassSearch from './components/classSearch';
 import CoursesSearch from './components/coursesSearch';
 import Profile from './components/profile';
 import MainPage from './components/mainpage';
+import InstructorSearch from './components/instructorSearch';
 import Bar from './components/bar';
 import Login from './components/login';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
@@ -43,6 +44,9 @@ function App(){
               </Route>
               <Route exact path="/class">
                 <ClassSearch user={user} classes={classes} setUser={setUser} setClasses={setClasses} />
+              </Route>
+              <Route exact path="/instructor">
+                <InstructorSearch classes={classes} setClasses={setClasses}/>
               </Route>
               <Route exact path="/login">
                 <Login user={user} setUser={setUser} setCoursesTaken={setCoursesTaken}/>

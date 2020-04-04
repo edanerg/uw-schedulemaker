@@ -41,6 +41,11 @@ function SideBar({ open, setOpen }: props) {
               View Courses
           </Typography>
         </ListItem>
+        <ListItem button onClick={() => handleRouteChange('instructor')}>
+          <Typography variant="h6">
+              Search Classes by Instructor
+          </Typography>
+        </ListItem>
         <ListItem button onClick={() => handleRouteChange('profile')}>
           <Typography variant="h6">
               Profile
