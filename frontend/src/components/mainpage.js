@@ -14,6 +14,14 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(2),
     marginBottom: theme.spacing(2),
   },
+  filter: {
+    width: '50%',
+    marginRight: theme.spacing(2),
+    marginTop: theme.spacing(2),
+  },
+  filterContainer: {
+    display: 'flex',
+  }
 }));
 
 const defaultCourse = 'CS';
@@ -24,6 +32,7 @@ function MainPage({ user }: props) {
   const [pastedSchedule, setPastedSchedule] = useState('');
   const [userClasses, setUserClasses] = useState([]);
   const [subjectFilter, setSubjectFilter] = useState(defaultCourse);
+  const [catalog, setCatalog] = useState('');
   const [addableClasses, setAddableClasses] = useState([]);
 
   const uploadSchedule = () => {
@@ -122,16 +131,26 @@ function MainPage({ user }: props) {
       <Typography variant="h5" gutterBottom>
         List of Classes that fit your schedule:
       </Typography>
-      <Select
+      <div className={classes.filterContainer}>
+        <Select
+          className={classes.filter}
           options={subjects}
           onChange={option => setSubjectFilter(option != null ? option.value : null)}
           isSearchable={true}
           isClearable={true}
           placeholder={subjectFilter}
         />
+        <TextField
+          className={classes.filter}
+          type="text"
+          name="catalog"
+          placeholder="Course code"
+          onChange={text => setCatalog(text.target.value)}
+        />
+      </div>
       <List>
         {addableClasses.filter(c => {
-          if(c.subject === subjectFilter) return true;
+          if(c.subject === subjectFilter && c.catalog_number.includes(catalog)) return true;
           return false;
         }).map(c => {
           return (
