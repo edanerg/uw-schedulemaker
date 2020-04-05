@@ -64,11 +64,17 @@ class Schedule(Resource):
   def post(self):
     data = request.json
     class_numbers = extract_class_num(data["schedule"])
+    class_to_add = data["classToAdd"]
+    class_to_remove = data["classToRemove"]
     username = data["username"]
 
     if username and class_numbers:
       add_user_schedule(username, class_numbers)
-
+    elif username and class_to_add:
+      add_user_schedule(username, [class_to_add])
+    elif username and class_to_remove:
+      remove_from_user_schedule(username, [class_to_remove])
+    
     return {'result': 'success'}
 
 

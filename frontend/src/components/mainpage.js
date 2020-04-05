@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Typography, TextField, Button, List, ListItem, Grid } from '@material-ui/core';
+import Select from 'react-select'
 import { makeStyles } from '@material-ui/core/styles';
 import axios from 'axios';
 import serverURL from '../config';
+import { subjects } from './coursesSearch';
 
 const useStyles = makeStyles(theme => ({
   textbox: {
@@ -14,16 +16,41 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const defaultCourse = 'CS';
+
 function MainPage({ user }: props) {
   const classes = useStyles();
   const [serverResponse, setServerResponse] = useState('');
   const [pastedSchedule, setPastedSchedule] = useState('');
   const [userClasses, setUserClasses] = useState([]);
+  const [subjectFilter, setSubjectFilter] = useState(defaultCourse);
   const [addableClasses, setAddableClasses] = useState([]);
 
   const uploadSchedule = () => {
     axios.post(`${serverURL}/schedule`, {
       schedule: pastedSchedule,
+      classToAdd: '',
+      classToRemove: '',
+      username: user ? user.username : '',
+    })
+    .then(res => setServerResponse(res.data.result));
+  };
+
+  const addClassToUserSchedule = classToAdd => {
+    axios.post(`${serverURL}/schedule`, {
+      classToAdd: classToAdd,
+      classToRemove: '',
+      schedule: '',
+      username: user ? user.username : '',
+    })
+    .then(res => setServerResponse(res.data.result));
+  };
+
+   const removeClassFromUserSchedule = classToRemove => {
+    axios.post(`${serverURL}/schedule`, {
+      classToRemove: classToRemove,
+      classToAdd: '',
+      schedule: '',
       username: user ? user.username : '',
     })
     .then(res => setServerResponse(res.data.result));
@@ -36,7 +63,8 @@ function MainPage({ user }: props) {
       if (user) setAddableClasses(res.data.addable_classes)
       setUserClasses(res.data.schedule)
     });
-  }, [user, serverResponse])
+  }, [user, serverResponse, addableClasses])
+
 
   return (
     <>
@@ -71,16 +99,21 @@ function MainPage({ user }: props) {
         {userClasses.map(c => {
           return (
             <ListItem component="div" key={c.id}>
-              <Grid>
-                <Typography component="div" variant="h6" color="textPrimary" gutterBottom>
-                  {`${c.subject} ${c.catalog_number} - ${c.class_type} ${c.section_number}`}
-                </Typography>
-                <Typography component="div" variant="body1" color="textPrimary" gutterBottom>
-                  {`${c.weekdays} ${c.start_time} ${c.end_time}`}
-                </Typography>
-                <Typography component="div" variant="body1" color="textPrimary" gutterBottom>
-                  {`${c.building} ${c.room}`}
-                </Typography>
+              <Grid container>
+                <Grid item xs={6}>
+                  <Typography component="div" variant="h6" color="textPrimary" gutterBottom>
+                    {`${c.subject} ${c.catalog_number} - ${c.class_type} ${c.section_number}`}
+                  </Typography>
+                  <Typography component="div" variant="body1" color="textPrimary" gutterBottom>
+                    {`${c.weekdays} ${c.start_time} ${c.end_time}`}
+                  </Typography>
+                  <Typography component="div" variant="body1" color="textPrimary" gutterBottom>
+                    {`${c.building} ${c.room}`}
+                  </Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Button color="primary" onClick={() => removeClassFromUserSchedule(c.id)}> Remove from schedule </Button>
+                </Grid>
               </Grid>
             </ListItem>
           )
@@ -89,8 +122,18 @@ function MainPage({ user }: props) {
       <Typography variant="h5" gutterBottom>
         List of Classes that fit your schedule:
       </Typography>
+      <Select
+          options={subjects}
+          onChange={option => setSubjectFilter(option != null ? option.value : null)}
+          isSearchable={true}
+          isClearable={true}
+          placeholder={subjectFilter}
+        />
       <List>
-        {addableClasses.map(c => {
+        {addableClasses.filter(c => {
+          if(c.subject === subjectFilter) return true;
+          return false;
+        }).map(c => {
           return (
             <ListItem component="div" key={c.id}>
               <Grid>
@@ -103,6 +146,7 @@ function MainPage({ user }: props) {
                 <Typography component="div" variant="body1" color="textPrimary" gutterBottom>
                   {`${c.building} ${c.room}`}
                 </Typography>
+                <Button color="primary" onClick={() => addClassToUserSchedule(c.id)}> Add to schedule </Button>
               </Grid>
             </ListItem>
           )

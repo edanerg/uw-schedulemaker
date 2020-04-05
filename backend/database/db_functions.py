@@ -269,6 +269,20 @@ def add_user_schedule(username, class_numbers):
     conn.close()
 
 
+def remove_from_user_schedule(username, class_numbers):
+  """
+    remove class_numbers from UserSchedule table
+  """
+  with db.connect() as conn:
+    for class_num in class_numbers:
+      conn.execute(
+          f"DELETE FROM UserSchedule "
+          f"WHERE class_number = '{class_num}' AND username = '{username}' "
+      )
+
+    conn.close()
+
+
 def get_instructor_classes(instructor_name):
   with db.connect() as conn:
     classes = conn.execute(
