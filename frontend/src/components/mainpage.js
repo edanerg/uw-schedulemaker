@@ -108,7 +108,7 @@ function MainPage({ user }: props) {
                     {`${c.weekdays} ${c.start_time} ${c.end_time}`}
                   </Typography>
                   <Typography component="div" variant="body1" color="textPrimary" gutterBottom>
-                    {`${c.building} ${c.room}`}
+                    {`${c.building} ${c.room}, Campus: ${c.campus}`}
                   </Typography>
                 </Grid>
                 <Grid item xs={6}>
@@ -144,7 +144,7 @@ function MainPage({ user }: props) {
                   {`${c.weekdays} ${c.start_time} ${c.end_time}`}
                 </Typography>
                 <Typography component="div" variant="body1" color="textPrimary" gutterBottom>
-                  {`${c.building} ${c.room}`}
+                  {`${c.building} ${c.room}, Campus: ${c.campus}`}
                 </Typography>
                 <Button color="primary" onClick={() => addClassToUserSchedule(c.id)}> Add to schedule </Button>
               </Grid>

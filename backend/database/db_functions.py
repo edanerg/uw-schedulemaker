@@ -205,6 +205,7 @@ def get_class_schedule(class_numbers):
             'topic': class_info['topic'],
             'section_number': class_info['section_number'],
             'academic_level': class_info['academic_level'],
+            'campus': class_info['campus'],
         }
         classes_list.append(class_info)
     conn.close()
