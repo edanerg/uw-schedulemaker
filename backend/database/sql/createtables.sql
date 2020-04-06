@@ -36,8 +36,8 @@ CREATE TABLE IF NOT EXISTS Class (
     section_number VARCHAR(10) NOT NULL, -- 001, 101, 201, etc
     campus VARCHAR(20) NOT NULL,
     associated_class INTEGER NOT NULL CHECK(associated_class >= 0),
-    related_component_1 INTEGER,
-    related_component_2 INTEGER,
+    related_component_1 INTEGER, -- will first be populated with results from API, then modified to reference a class number
+    related_component_2 INTEGER, -- same as related_component_1
     topic VARCHAR(1000),
     term INTEGER NOT NULL,
     academic_level VARCHAR(20),
