@@ -58,7 +58,6 @@ class Schedule(Resource):
     if username:
       addable_classes_num = get_classes_user_can_add(username)
       addable_classes_schedule = get_class_schedule(addable_classes_num)
-    
     return {'schedule': class_schedule_list, 'addable_classes': addable_classes_schedule}
 
   def post(self):

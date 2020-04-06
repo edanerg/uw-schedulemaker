@@ -202,14 +202,124 @@ def get_class_schedule(class_numbers):
             'subject': class_info['subject'],
             'catalog_number': class_info['catalog_number'],
             'class_type': class_info['class_type'],
-            'topic': class_info['topic'],
             'section_number': class_info['section_number'],
+            'topic': class_info['topic'],
             'academic_level': class_info['academic_level'],
             'campus': class_info['campus'],
+            'rel_1': class_info['related_component_1'],
+            'rel_2': class_info['related_component_2'],
         }
         classes_list.append(class_info)
     conn.close()
   return classes_list
+
+
+def filter_and_extract_classes(condition, components):
+  """
+    Returns an array of pairs of class numbers and section numbers of components that 
+    satisfy the condition
+  """
+  class_nums = []
+  for comp in components:
+    if condition(comp):
+      class_nums.append((comp['class_nbr'], comp['section_number']))
+  return class_nums
+
+
+def allowed_class_nums(primary_components, first_components, second_components):
+  """
+    Returns all addable classes after removing any components that did not have their other matching components.
+  """
+  allowed_primaries, allowed_firsts, allowed_seconds = [], set(), set()
+  open_firsts = filter(lambda comp: comp['related_component_1'] == 99, first_components)
+  open_firsts = list(map(lambda first: (first['class_nbr'], first['section_number']), open_firsts))
+  open_seconds = filter(lambda comp: comp['related_component_1'] == 99, second_components)
+  open_seconds = list(map(lambda second: (second['class_nbr'], second['section_number']), open_seconds))
+  if not primary_components:
+    return []
+  for primary in primary_components:
+    r1_value = primary['related_component_1']
+    r2_value = primary['related_component_2']
+    # If class is supposed to have first or second components but there aren't any, skip
+    if (r1_value != 0 and not first_components) or (r2_value != 0 and not second_components):
+      continue
+    class_number = primary['class_nbr']
+    if r1_value == 1:
+      matching_firsts = filter_and_extract_classes(lambda comp:
+        comp['related_component_1'] == class_number, first_components)
+      # If class is supposed to have matching first components but none matched, skip
+      if not matching_firsts:
+        continue
+      allowed_firsts.update(matching_firsts)
+    elif r1_value == 2:
+      # If class is supposed to have any open first component but there aren't any, skip
+      if not open_firsts:
+        continue
+    elif r1_value != 0:
+      matching_first = filter_and_extract_classes(lambda comp:
+        comp['class_nbr'] == r1_value, first_components)
+      # If there is exactly one matching first component but it isn't included, skip
+      if not matching_first:
+        continue
+      allowed_firsts.update(matching_first)
+    if r2_value == 1:
+      matching_seconds = filter_and_extract_classes(lambda comp:
+        comp['related_component_1'] == class_number, second_components)
+      if not matching_seconds:
+        continue
+      allowed_seconds.update(matching_seconds)
+    elif r2_value == 2:
+      if not open_seconds:
+        continue
+    elif r2_value != 0:
+      matching_second = filter_and_extract_classes(lambda comp:
+        comp['class_nbr'] == r2_value, second_components)
+      if not matching_second:
+        continue
+      allowed_seconds.update(matching_second)
+    allowed_primaries.append(class_number)
+  if not allowed_primaries:
+    return []
+  # Add the open components and sort by section number
+  allowed_firsts.update(open_firsts)
+  allowed_firsts = map(lambda first: first[0], 
+    sorted(allowed_firsts, key = (lambda comp: comp[1])))
+  allowed_seconds.update(open_seconds)
+  allowed_seconds = map(lambda sec: sec[0], 
+    sorted(allowed_seconds, key = (lambda comp: comp[1])))
+  return allowed_primaries + list(allowed_firsts) + list(allowed_seconds)
+
+
+def remove_incomplete_components(addable_classes):
+  """
+    Returns all addable classes after removing any primary components that didn't have their
+    matching related components.
+  """
+  finalized_class_nums = []
+  current_subject = ''
+  current_catalog_number = ''
+  primary_components, first_components, second_components = [], [], []
+  for addable_class in addable_classes:
+    subject = addable_class['subject']
+    catalog_number = addable_class['catalog_number']
+    if current_subject is None:
+        current_subject = subject
+        current_catalog_number = catalog_number
+    elif subject != current_subject or current_catalog_number != catalog_number:
+      finalized_class_nums += allowed_class_nums(primary_components, first_components, second_components)
+      current_subject = subject
+      current_catalog_number = catalog_number
+      primary_components, first_components, second_components = [], [], []
+    section_number = addable_class['section_number']
+    if len(section_number) > 0:
+      if section_number[0] == '0':
+        primary_components.append(addable_class)
+      elif section_number[0] == '1':
+        first_components.append(addable_class)
+      else:
+        second_components.append(addable_class)
+  finalized_class_nums += allowed_class_nums(primary_components, first_components, second_components)
+  return finalized_class_nums
 
 
 def get_classes_user_can_add(username):
@@ -236,6 +346,21 @@ def get_classes_user_can_add(username):
       'weekdays': row['weekdays'],
     } for row in class_times_info]
 
+    # get courses that the user is currently taking and has already taken
+    current_courses = conn.execute(
+      "SELECT DISTINCT subject, catalog_number FROM UserSchedule NATURAL JOIN Class "
+      f"WHERE username = '{username}';"
+    )
+    courses_taken = conn.execute(
+      "SELECT subject, catalog_number FROM CoursesTaken "
+      f"WHERE username = '{username}';"
+    )
+    current_courses = [(row['subject'], row['catalog_number']) for row in current_courses]
+    courses_taken = [(row['subject'], row['catalog_number']) for row in courses_taken]
+    current_courses += courses_taken
+    total_courses = str(current_courses)
+    total_courses = total_courses[1:len(total_courses)-1] # removes square brackets
+
     query = ""
     for class_time_info in class_times_info:
       weekday = class_time_info['weekdays']
@@ -243,14 +368,18 @@ def get_classes_user_can_add(username):
       end_time = class_time_info['end_time']
       query += f"(('{weekday}' NOT LIKE '%' || ClassTime.weekdays || '%' AND ClassTime.weekdays NOT LIKE '%{weekday}%') OR "
       query += f"((ClassTime.end_time < '{start_time}' OR ClassTime.start_time > '{end_time}'))) AND "
+      query += f"(subject, catalog_number) NOT IN (VALUES {total_courses}) AND "
     
     addable_classes_query = conn.execute(
-      "SELECT ClassTime.class_number as class_nbr "
+      "SELECT ClassTime.class_number as class_nbr, Class.subject, Class.catalog_number, "
+      "Class.section_number, Class.related_component_1, Class.related_component_2 "
       "FROM ClassTime LEFT JOIN Class ON ClassTime.class_number = Class.class_number "
-      f"WHERE {query} academic_level = '{academic_level}'; "
+      f"WHERE {query} academic_level = '{academic_level}' "
+      "ORDER BY subject, catalog_number, section_number; "
     )
-
-    addable_classes = [dict(row)['class_nbr'] for row in addable_classes_query]
+    addable_classes = [dict(row) for row in addable_classes_query]
+    addable_classes = remove_incomplete_components(addable_classes)
+    print(addable_classes)
     conn.close()
   return addable_classes
 
@@ -284,6 +413,7 @@ def remove_from_user_schedule(username, class_numbers):
     conn.close()
 
 
+############ sql/helper functions for /instructor route ###########
 def get_instructor_classes(instructor_name):
   with db.connect() as conn:
     classes = conn.execute(
@@ -309,4 +439,4 @@ def get_instructor_classes(instructor_name):
       }
       classes_list.append(class_info)
     conn.close()
-  return classes_list;
+  return classes_list
