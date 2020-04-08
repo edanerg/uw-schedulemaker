@@ -6,7 +6,7 @@ import serverURL from '../config';
 import axios from 'axios';
 
 export const subjects = [
-    { value: 'ACC', label: 'ACC' }, { value: 'ACINTY', label: 'ACINTY' }, { value: 'ACTSCAE', label: 'ACTSCAE' }, { value: 'AFM', label: 'AFM' },
+    { value: 'ACC', label: 'ACC' }, { value: 'ACINTY', label: 'ACINTY' }, { value: 'ACTSC', label: 'ACTSC' }, { value: 'AFM', label: 'AFM' },
     { value: 'AHS', label: 'AHS' }, { value: 'AMATH', label: 'AMATH' }, { value: 'ANTH', label: 'ANTH' }, { value: 'APPLS', label: 'APPLS' },
     { value: 'ARBUS', label: 'ARBUS' }, { value: 'ARCH', label: 'ARCH' }, { value: 'ARCHL', label: 'ARCHL' }, { value: 'ARTS', label: 'ARTS' },
     { value: 'ASL', label: 'ASL' }, { value: 'ASTRN', label: 'ASTRN' }, { value: 'AVIA', label: 'AVIA' }, { value: 'BASE', label: 'BASE' },
