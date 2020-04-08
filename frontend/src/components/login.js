@@ -83,7 +83,7 @@ function Login({ setUser, setCoursesTaken, }: props) {
     }
 
     return (
-        <div style={{display: "flex", justifyContent: "center", textAlign: "center", marginTop: "20%"}}>
+        <div style={{display: "flex", justifyContent: "center", textAlign: "center", marginTop: "10%"}}>
             <Card style={{width: "500px"}} raised>
                 <CardContent style={{display: "flex", flexDirection: "column", alignItems: "center", margin: "30px"}}>
                     <Typography variant="h3" color="textPrimary" style={{marginBottom: "20px"}}>
