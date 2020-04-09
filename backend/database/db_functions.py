@@ -1,6 +1,6 @@
 import os
+from .prereq import check_prereq, is_antireq
 from .db_connect import db
-
 
 ############ sql functions for /courses route ###########
 def get_filtered_classes(from_time, to_time, weekdays, subject, catalog_number):
@@ -160,7 +160,6 @@ def extract_class_num(user_schedule):
         is_class_num = True
   print(list_class_num)
   return list_class_num
-
 
 def get_users_classnums(username):
   """
@@ -377,7 +376,48 @@ def get_classes_user_can_add(username):
       f"WHERE {query} academic_level = '{academic_level}' "
       "ORDER BY subject, catalog_number, section_number; "
     )
+
     addable_classes = [dict(row) for row in addable_classes_query]
+    addable_courses = [(row['subject'], row['catalog_number']) for row in addable_classes]
+    addable_courses = list(set([i for i in addable_courses]))  # remove duplicates
+    addable_courses = str(addable_courses)
+    addable_courses = addable_courses[1:len(addable_courses)-1]
+
+    get_total_courses_antireq_quary = conn.execute(
+      "SELECT subject, catalog_number, antirequisites "
+      "FROM Course "
+      f"WHERE (Course.subject, Course.catalog_number) IN (VALUES {total_courses}); "
+    )
+
+    total_courses_antireq = [dict(row) for row in get_total_courses_antireq_quary]
+
+    if len(addable_courses) > 0:
+      get_addable_classes_prereq_quary = conn.execute(
+        "SELECT subject, catalog_number, prerequisites "
+        "FROM Course "
+        f"WHERE (Course.subject, Course.catalog_number) IN (VALUES {addable_courses}); "
+      )
+      addable_classes_prereq = {row['subject']+row['catalog_number']: row['prerequisites'] for row in get_addable_classes_prereq_quary}
+
+    # remove classes in addable_classes that are anti-requisites to any of the courses in total courses
+    for addable_class in addable_classes:
+      for course in total_courses_antireq:
+        added_course = addable_class['subject']+addable_class['catalog_number']
+        past_course_antireq = course['antirequisites']
+        if is_antireq(added_course, past_course_antireq):
+          addable_classes.remove(addable_class)
+          break
+
+    current_courses = [row[0]+row[1] for row in current_courses] # list of courses taken by the user
+
+    # remove classes in addable_classes if the user does not satisfy the classes'prerequisites
+    for addable_class in addable_classes:
+      added_course = addable_class['subject']+addable_class['catalog_number']
+      added_course_prereq = addable_classes_prereq.get(added_course)
+      assert(added_course_prereq is not None)
+      if not check_prereq(current_courses, added_course_prereq):
+        addable_classes.remove(addable_class)
+
     addable_classes = remove_incomplete_components(addable_classes)
     print(addable_classes)
     conn.close()
@@ -440,3 +480,6 @@ def get_instructor_classes(instructor_name):
       classes_list.append(class_info)
     conn.close()
   return classes_list
+
+
+get_classes_user_can_add("kccheng")
