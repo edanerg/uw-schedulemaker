@@ -480,6 +480,3 @@ def get_instructor_classes(instructor_name):
       classes_list.append(class_info)
     conn.close()
   return classes_list
-
-
-get_classes_user_can_add("kccheng")
