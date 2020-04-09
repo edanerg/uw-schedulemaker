@@ -480,3 +480,4 @@ def get_instructor_classes(instructor_name):
       classes_list.append(class_info)
     conn.close()
   return classes_list
+
