@@ -1,6 +1,7 @@
 import os
 from .prereq import check_prereq, is_antireq
 from .db_connect import db
+from sqlalchemy import text
 
 ############ sql functions for /courses route ###########
 def get_filtered_classes(from_time, to_time, weekdays, subject, catalog_number):
@@ -328,13 +329,13 @@ def get_classes_user_can_add(username):
   addable_classes = []
   with db.connect() as conn:
     class_times_info = conn.execute(
-      "SELECT weekdays, start_time, end_time "
+      text("SELECT weekdays, start_time, end_time "
       "FROM UserSchedule LEFT JOIN ClassTime ON UserSchedule.class_number = ClassTime.class_number "
-      f"WHERE username = '{username}';"
+      f"WHERE username = :username;"), {'username': username}
     )
     #get user's academic level
     user_info = conn.execute(
-      f"SELECT academic_level FROM AppUser WHERE username = '{username}';"
+      text("SELECT academic_level FROM AppUser WHERE username = :username;"), {'username': username}
     )
     academic_level = [dict(row)['academic_level'] for row in user_info][0]
     
@@ -347,12 +348,12 @@ def get_classes_user_can_add(username):
 
     # get courses that the user is currently taking and has already taken
     current_courses = conn.execute(
-      "SELECT DISTINCT subject, catalog_number FROM UserSchedule NATURAL JOIN Class "
-      f"WHERE username = '{username}';"
+      text("SELECT DISTINCT subject, catalog_number FROM UserSchedule NATURAL JOIN Class "
+           "WHERE username = :username;"), {'username': username}
     )
     courses_taken = conn.execute(
-      "SELECT subject, catalog_number FROM CoursesTaken "
-      f"WHERE username = '{username}';"
+      text("SELECT subject, catalog_number FROM CoursesTaken "
+           "WHERE username = :username;"), {'username': username}
     )
     current_courses = [(row['subject'], row['catalog_number']) for row in current_courses]
     courses_taken = [(row['subject'], row['catalog_number']) for row in courses_taken]
@@ -431,9 +432,10 @@ def add_user_schedule(username, class_numbers):
   with db.connect() as conn:
     for class_num in class_numbers:
       conn.execute(
-        f"INSERT INTO UserSchedule SELECT '{username}', '{class_num}' "
-        f"WHERE EXISTS (SELECT 1 FROM Class WHERE class_number = '{class_num}') "
-        f"ON CONFLICT (username, class_number) DO NOTHING;"
+        text("INSERT INTO UserSchedule SELECT :username, :class_num "
+        "WHERE EXISTS (SELECT 1 FROM Class WHERE class_number = :class_num) "
+        "ON CONFLICT (username, class_number) DO NOTHING;"),
+        {'username': username, 'class_num': class_num}
       )
     
     conn.close()
@@ -446,20 +448,26 @@ def remove_from_user_schedule(username, class_numbers):
   with db.connect() as conn:
     for class_num in class_numbers:
       conn.execute(
-          f"DELETE FROM UserSchedule "
-          f"WHERE class_number = '{class_num}' AND username = '{username}' "
+          text("DELETE FROM UserSchedule "
+               "WHERE class_number = :class_num AND username = :username "),
+          {'class_num': class_num, 'username': username}
       )
 
     conn.close()
 
-
 ############ sql/helper functions for /instructor route ###########
 def get_instructor_classes(instructor_name):
   with db.connect() as conn:
+    # statement = text("SELECT Class.class_number AS class_nbr, * "
+    #                  "FROM Instructor, ClassTime, Class "
+    #                  "WHERE Instructor.name LIKE :pattern and ClassTime.instructor_id = Instructor.id and ClassTime.class_number = Class.class_number;")
+    # statement.bindparams(pattern=f"'%{instructor_name}%'")
+    # print(statement)
     classes = conn.execute(
-      "SELECT Class.class_number AS class_nbr, * "
-      "FROM Instructor, ClassTime, Class "
-      f"WHERE Instructor.name LIKE '%{instructor_name}%' and ClassTime.instructor_id = Instructor.id and ClassTime.class_number = Class.class_number "
+      text("SELECT Class.class_number AS class_nbr, * "
+           "FROM Instructor, ClassTime, Class "
+           "WHERE Instructor.name LIKE :pattern and ClassTime.instructor_id = Instructor.id and ClassTime.class_number = Class.class_number;"),
+      {'pattern': f'%{instructor_name}%'}
     )
     classes_list = []
     for class_info in classes:
