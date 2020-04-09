@@ -100,7 +100,9 @@ def get_courses_user_taken(username):
   """
   result = []
   with db.connect() as conn:
-    all_courses = conn.execute(f'SELECT * FROM CoursesTaken, Course WHERE CoursesTaken.username = \'{username}\' AND Course.subject = CoursesTaken.subject AND Course.catalog_number = CoursesTaken.catalog_number').fetchall()
+    all_courses = conn.execute(
+      text("SELECT * FROM CoursesTaken, Course WHERE CoursesTaken.username = :username "
+      " AND Course.subject = CoursesTaken.subject AND Course.catalog_number = CoursesTaken.catalog_number"), username = username).fetchall()
     for course in all_courses:
       course_info = {
         'id': course['id'],
@@ -119,11 +121,17 @@ def add_user_course_taken(data):
     Adds courses that the user took in the CoursesTaken table
   """
   with db.connect() as conn:
-    matched_course = conn.execute(f'SELECT * FROM Course WHERE Course.subject = \'{data["subject"]}\' AND Course.catalog_number = \'{data["catalog_number"]}\'').fetchone()
+    matched_course = conn.execute(
+      text("SELECT * FROM Course WHERE Course.subject = :subject "
+      "AND Course.catalog_number = :catalog_number"),
+      subject = data["subject"], catalog_number = data["catalog_number"]).fetchone()
     if matched_course is None: return {'result': 'ERROR: No Such Course.'}
     matched_course = dict(matched_course.items())
     try:
-      conn.execute(f'INSERT INTO CoursesTaken VALUES (\'{data["username"]}\', \'{matched_course["subject"]}\', \'{matched_course["catalog_number"]}\')')
+      conn.execute(
+        text("INSERT INTO CoursesTaken VALUES (:username, :subject, :catalog_number)"),
+        username = data["username"], subject = matched_course["subject"], 
+        catalog_number = matched_course["catalog_number"])
     except:
       return {'result': 'ERROR: Course Already Exists.'}
     conn.close()
@@ -135,10 +143,14 @@ def delete_course_taken(username, subject, catalog_number):
     Deleted the course from CoursesTaken table
   """
   with db.connect() as conn:
-    matched_course = conn.execute(f'SELECT * FROM CoursesTaken WHERE username = \'{username}\' AND subject = \'{subject}\' AND catalog_number = \'{catalog_number}\'').fetchone()
+    matched_course = conn.execute(
+      text("SELECT * FROM CoursesTaken WHERE username = :username AND subject = :subject AND catalog_number = :catalog_number"),
+      username = username, subject = subject, catalog_number = catalog_number).fetchone()
     if matched_course is None: return {'result': 'ERROR: You have not taken this course.'}
     try:
-      conn.execute(f'DELETE FROM CoursesTaken WHERE username = \'{username}\' AND subject = \'{subject}\' AND catalog_number = \'{catalog_number}\'')
+      conn.execute(
+        text("DELETE FROM CoursesTaken WHERE username = :username AND subject = :subject AND catalog_number = :catalog_number"),
+        username = username, subject = subject, catalog_number = catalog_number)
     except:
       return {'result': 'ERROR: Course not uploaded.'}
     conn.close()
@@ -169,9 +181,8 @@ def get_users_classnums(username):
   user_class_nums = []
   with db.connect() as conn:
     get_class_nums = conn.execute(
-      'SELECT class_number '
-      'FROM UserSchedule '
-      f"WHERE username = '{username}'"
+      text("SELECT class_number FROM UserSchedule WHERE username = :username;"),
+      username = username
     )
     user_class_nums = [dict(row)["class_number"] for row in get_class_nums]
 
@@ -187,9 +198,9 @@ def get_class_schedule(class_numbers):
   with db.connect() as conn:
     for class_num in class_numbers:
       all_classes = conn.execute(
-          "SELECT Class.class_number AS class_nbr, * "
+          text("SELECT Class.class_number AS class_nbr, * "
           "FROM ClassTime LEFT JOIN Class ON Class.class_number = ClassTime.class_number "
-          f"WHERE ClassTime.class_number = '{class_num}'; "
+          "WHERE ClassTime.class_number = :class_num"), class_num = class_num
       )
       for class_info in all_classes:
         class_info = {
