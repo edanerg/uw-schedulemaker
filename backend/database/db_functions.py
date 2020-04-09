@@ -469,11 +469,6 @@ def remove_from_user_schedule(username, class_numbers):
 ############ sql/helper functions for /instructor route ###########
 def get_instructor_classes(instructor_name):
   with db.connect() as conn:
-    # statement = text("SELECT Class.class_number AS class_nbr, * "
-    #                  "FROM Instructor, ClassTime, Class "
-    #                  "WHERE Instructor.name LIKE :pattern and ClassTime.instructor_id = Instructor.id and ClassTime.class_number = Class.class_number;")
-    # statement.bindparams(pattern=f"'%{instructor_name}%'")
-    # print(statement)
     classes = conn.execute(
       text("SELECT Class.class_number AS class_nbr, * "
            "FROM Instructor, ClassTime, Class "
