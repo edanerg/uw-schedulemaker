@@ -372,16 +372,6 @@ def get_classes_user_can_add(username):
     total_courses = str(current_courses)
     total_courses = total_courses[1:len(total_courses)-1] # removes square brackets
 
-    # query = ""
-    # for class_time_info in class_times_info:
-    #   weekday = class_time_info['weekdays']
-    #   start_time = class_time_info['start_time']
-    #   end_time = class_time_info['end_time']
-    #   query += f"(('{weekday}' NOT LIKE '%' || ClassTime.weekdays || '%' AND ClassTime.weekdays NOT LIKE '%{weekday}%') OR "
-    #   query += f"((ClassTime.end_time < '{start_time}' OR ClassTime.start_time > '{end_time}'))) AND "
-    #   query += f"(subject, catalog_number) NOT IN (VALUES {total_courses}) AND "
-
-
     query = ""
     for class_time_info in class_times_info:
       weekday = class_time_info['weekdays']
@@ -389,8 +379,8 @@ def get_classes_user_can_add(username):
       end_time = class_time_info['end_time']
       query += f"(('{weekday}' NOT LIKE '%' || ClassTime.weekdays || '%' AND ClassTime.weekdays NOT LIKE '%{weekday}%') OR "
       query += f"((ClassTime.end_time < '{start_time}' OR ClassTime.start_time > '{end_time}'))) AND "
-      query += f"(subject, catalog_number) NOT IN (VALUES {total_courses}) AND "
-
+    
+    query += f"(subject, catalog_number) NOT IN (VALUES {total_courses}) AND "
     addable_classes_query = conn.execute(
       "SELECT ClassTime.class_number as class_nbr, Class.subject, Class.catalog_number, "
       "Class.section_number, Class.related_component_1, Class.related_component_2 "
