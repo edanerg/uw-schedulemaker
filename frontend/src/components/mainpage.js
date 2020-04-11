@@ -52,7 +52,7 @@ function MainPage({ user }: props) {
   const [showRel2, setShowRel2] = useState({display: 'none'});
   const [addOpen, setAddOpen] = useState(false);
   const [removeOpen, setRemoveOpen] = useState(false);
-  const [classSelected, setClassSelected] = useState(0);
+  const [classSelected, setClassSelected] = useState(null);
 
   const uploadSchedule = () => {
     axios.post(`${serverURL}/schedule`, {
@@ -138,6 +138,7 @@ function MainPage({ user }: props) {
   // Remove Dialog
   const handleRemoveClose = () => {
     setRemoveOpen(false);
+    setClassSelected(null);
   };
 
   const initRemoveDialog = c => {
@@ -145,6 +146,7 @@ function MainPage({ user }: props) {
       removeClassFromUserSchedule(c.id);
       return;
     }
+    setClassSelected(c);
     if (c.rel_1 !== 0 && c.rel_2 !== 0) {
       setDialogTitle('Remove second and third components?');
       setDialogText('The class you are about to remove has a second and third related component which will also be removed. '
@@ -161,20 +163,23 @@ function MainPage({ user }: props) {
     setRemoveOpen(true);
   };
 
-  const handleRemove = classToRemove => {
-    // Remove any classes in user's schedule that have a matching subject and catalog number (including itself)
-    userClasses.map(c => {
-      if (c.subject === classToRemove.subject && c.catalog_number === classToRemove.catalog_number) {
-        removeClassFromUserSchedule(c.id);
-      }
-    });
+  const handleRemove = () => {
+    if (classSelected) {
+      // Remove any classes in user's schedule that have a matching subject and catalog number (including itself)
+      userClasses.map(c => {
+        if (c.subject === classSelected.subject && c.catalog_number === classSelected.catalog_number) {
+          removeClassFromUserSchedule(c.id);
+        }
+      });
+    }
     setRemoveOpen(false);
+    setClassSelected(null);
   };
 
   // Add Dialog
   const handleAddClose = () => {
     setAddOpen(false);
-    setClassSelected(0);
+    setClassSelected(null);
     setRel1Value(0);
     setRel2Value(0);
   };
@@ -184,7 +189,7 @@ function MainPage({ user }: props) {
       addClassToUserSchedule(c.id);
       return;
     }
-    setClassSelected(c.id);
+    setClassSelected(c);
     setDialogTitle('Warning: related components');
     // Get all classes that match subject and catalog_number
     var matchingClasses = addableClasses.filter(d => {
@@ -262,8 +267,8 @@ function MainPage({ user }: props) {
   };
 
   const handleAdd = () => {
-    if (classSelected !== 0) {
-      addClassToUserSchedule(classSelected);
+    if (classSelected) {
+      addClassToUserSchedule(classSelected.id);
       if (rel1Value !== 0) {
         addClassToUserSchedule(rel1Value);
       }
@@ -272,7 +277,7 @@ function MainPage({ user }: props) {
       }
     }
     setAddOpen(false);
-    setClassSelected(0);
+    setClassSelected(null);
     setRel1Value(0);
     setRel2Value(0);
   };
@@ -334,7 +339,7 @@ function MainPage({ user }: props) {
                       </DialogContentText>
                     </DialogContent>
                     <DialogActions>
-                      <Button onClick={() => handleRemove(c)} color="primary" autoFocus>
+                      <Button onClick={handleRemove} color="primary" autoFocus>
                         Yes
                       </Button>
                     </DialogActions>
