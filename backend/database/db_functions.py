@@ -372,6 +372,16 @@ def get_classes_user_can_add(username):
     total_courses = str(current_courses)
     total_courses = total_courses[1:len(total_courses)-1] # removes square brackets
 
+    # query = ""
+    # for class_time_info in class_times_info:
+    #   weekday = class_time_info['weekdays']
+    #   start_time = class_time_info['start_time']
+    #   end_time = class_time_info['end_time']
+    #   query += f"(('{weekday}' NOT LIKE '%' || ClassTime.weekdays || '%' AND ClassTime.weekdays NOT LIKE '%{weekday}%') OR "
+    #   query += f"((ClassTime.end_time < '{start_time}' OR ClassTime.start_time > '{end_time}'))) AND "
+    #   query += f"(subject, catalog_number) NOT IN (VALUES {total_courses}) AND "
+
+
     query = ""
     for class_time_info in class_times_info:
       weekday = class_time_info['weekdays']
@@ -380,7 +390,7 @@ def get_classes_user_can_add(username):
       query += f"(('{weekday}' NOT LIKE '%' || ClassTime.weekdays || '%' AND ClassTime.weekdays NOT LIKE '%{weekday}%') OR "
       query += f"((ClassTime.end_time < '{start_time}' OR ClassTime.start_time > '{end_time}'))) AND "
       query += f"(subject, catalog_number) NOT IN (VALUES {total_courses}) AND "
-    
+
     addable_classes_query = conn.execute(
       "SELECT ClassTime.class_number as class_nbr, Class.subject, Class.catalog_number, "
       "Class.section_number, Class.related_component_1, Class.related_component_2 "
@@ -412,7 +422,7 @@ def get_classes_user_can_add(username):
       addable_classes_prereq = {row['subject']+row['catalog_number']: row['prerequisites'] for row in get_addable_classes_prereq_quary}
 
     # remove classes in addable_classes that are anti-requisites to any of the courses in total courses
-    for addable_class in addable_classes:
+    for addable_class in reversed(addable_classes):
       for course in total_courses_antireq:
         added_course = addable_class['subject']+addable_class['catalog_number']
         past_course_antireq = course['antirequisites']
@@ -423,12 +433,13 @@ def get_classes_user_can_add(username):
     current_courses = [row[0]+row[1] for row in current_courses] # list of courses taken by the user
 
     # remove classes in addable_classes if the user does not satisfy the classes'prerequisites
-    for addable_class in addable_classes:
+    for addable_class in reversed(addable_classes):
       added_course = addable_class['subject']+addable_class['catalog_number']
       added_course_prereq = addable_classes_prereq.get(added_course)
       assert(added_course_prereq is not None)
       if not check_prereq(current_courses, added_course_prereq):
         addable_classes.remove(addable_class)
+
 
     addable_classes = remove_incomplete_components(addable_classes)
     print(addable_classes)
@@ -494,3 +505,4 @@ def get_instructor_classes(instructor_name):
       classes_list.append(class_info)
     conn.close()
   return classes_list
+
