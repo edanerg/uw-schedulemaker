@@ -49,6 +49,11 @@ Cheng Keat Chong:
 - Created parser for user's uploaded schedule
 - Modified User table and added UserSchedule table to store user's schedule
 (Final)
+- Created parser for prerequisites and antirequisites 
+- In showing a list of courses a user can take, checked if the user satisfy the courses' prerequisites and 
+prevent displaying courses the are antirequisites to courses that are previously/currently taken by the user
+- Contributed to video script
+- Contributed to final report 
 
 Yuetong Wang:
 (Milestone 0 and 1)
