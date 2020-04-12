@@ -54,6 +54,12 @@ function ClassList({ classes }: props) {
                         <Typography variant="body1" color="textSecondary" gutterBottom>
                           {`${c.building} ${c.room}`}
                         </Typography>
+                        <Typography variant="body1" color="textPrimary" gutterBottom>
+                          Instructor
+                        </Typography>
+                        <Typography variant="body1" color="textSecondary" gutterBottom>
+                          {(c.instructor) ? `${c.instructor}` : "TBA"}
+                        </Typography>
                       </ExpansionPanelDetails>
                     </ExpansionPanel>
                 </Card>

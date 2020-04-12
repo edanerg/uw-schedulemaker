@@ -3,7 +3,7 @@ from .prereq import check_prereq, is_antireq
 from .db_connect import db
 from sqlalchemy import text
 
-############ sql functions for /courses route ###########
+############ sql functions for /classes route ###########
 def get_filtered_classes(from_time, to_time, weekdays, subject, catalog_number):
   """
     Searches the Classtime table for classes that fit between times from_time and to_time and that
@@ -13,13 +13,14 @@ def get_filtered_classes(from_time, to_time, weekdays, subject, catalog_number):
   result = []
   with db.connect() as conn:
     selected_classes = conn.execute(
-      "SELECT * FROM Classtime LEFT JOIN "
+      "SELECT * FROM (Classtime LEFT JOIN "
       "(SELECT Class.class_number AS class_num, Course.subject AS c_subject, Course.catalog_number AS c_catalog, "
       "Class.units AS units, Class.class_type AS class_type, Class.section_number AS section_number, "
-      "Course.description AS description, Course.name AS name "
+      "Course.description AS description, Course.name AS course_name "
       "FROM Class LEFT JOIN Course ON Course.subject = Class.subject AND Course.catalog_number = Class.catalog_number) "
       "AS CourseAndClass "
-      "ON CourseAndClass.class_num = ClassTime.class_number "
+      "ON CourseAndClass.class_num = ClassTime.class_number) "
+      "LEFT JOIN Instructor ON Classtime.instructor_id = Instructor.id "
       f"WHERE weekdays LIKE '%{weekdays}%' AND c_subject LIKE '%{subject}%' AND c_catalog LIKE '%{catalog_number}%' "
       f"AND start_time >= '{from_time}' AND end_time <= '{to_time}'"
     )
@@ -39,7 +40,8 @@ def get_filtered_classes(from_time, to_time, weekdays, subject, catalog_number):
         'class_type': selected_class['class_type'],
         'section_number': selected_class['section_number'],
         'description': selected_class['description'],
-        'name': selected_class['name'],
+        'name': selected_class['course_name'],
+        'instructor': selected_class['name'],
       }
       result.append(class_info)
     conn.close()
