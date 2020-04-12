@@ -40,6 +40,9 @@ Ana:
 - Allow user can view their schedule on the Main page whenever they log in again
 - Move all sql-related query functions to db_functions.py
 (Final)
+- Add user schedule feature on Main page
+- user can see list of classes they can add
+- class can add and remove classes from their schedule
 
 Cheng Keat Chong:
 (Milestone 0 and 1)

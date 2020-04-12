@@ -12,7 +12,7 @@ def get_filtered_classes(from_time, to_time, weekdays, subject, catalog_number):
   """
   result = []
   with db.connect() as conn:
-    selected_classes = conn.execute(
+    selected_classes = conn.execute( text(
       "SELECT * FROM (Classtime LEFT JOIN "
       "(SELECT Class.class_number AS class_num, Course.subject AS c_subject, Course.catalog_number AS c_catalog, "
       "Class.units AS units, Class.class_type AS class_type, Class.section_number AS section_number, "
@@ -21,8 +21,12 @@ def get_filtered_classes(from_time, to_time, weekdays, subject, catalog_number):
       "AS CourseAndClass "
       "ON CourseAndClass.class_num = ClassTime.class_number) "
       "LEFT JOIN Instructor ON Classtime.instructor_id = Instructor.id "
-      f"WHERE weekdays LIKE '%{weekdays}%' AND c_subject LIKE '%{subject}%' AND c_catalog LIKE '%{catalog_number}%' "
-      f"AND start_time >= '{from_time}' AND end_time <= '{to_time}'"
+      f"WHERE weekdays LIKE :weekdays AND c_subject LIKE :subject AND c_catalog LIKE :catalog_number "
+      f"AND start_time >= :from_time AND end_time <= :to_time"),
+        {
+          'weekdays': f'%{weekdays}%', "subject": f'%{subject}%', "catalog_number": f'%{catalog_number}%',
+          'from_time': from_time, 'to_time': to_time
+        }
     )
     
     for selected_class in selected_classes:
@@ -56,11 +60,12 @@ def get_courses(subject, catalog_number):
   """
   sql_command = "SELECT * FROM Course"
   if subject != '':
-    sql_command += f" WHERE subject = '{subject}'"
+    sql_command += f" WHERE subject = :subject"
   if catalog_number != '':
-    sql_command += f" AND catalog_number LIKE '{catalog_number}%'" if subject != '' else f" WHERE catalog_number LIKE '{catalog_number}%'"
+    sql_command += f" AND catalog_number LIKE :catalog_number" if subject != '' else f" WHERE catalog_number LIKE :catalog_number"
   with db.connect() as conn:
-    all_courses = conn.execute(sql_command)
+    all_courses = conn.execute(
+        text(sql_command), {'catalog_number': f'{catalog_number}%', "subject": subject})
     result = [dict(row) for row in all_courses]
     print(result)
     conn.close()
@@ -85,7 +90,8 @@ def user_profile_actions(data):
           return {'result': 'ERROR: username should consist of only lowercase or uppercase letters'}
       academic_level = data["academic_level"] if "academic_level" in data else "undergrad"
       try:
-        conn.execute(f'INSERT INTO AppUser (username, academic_level) VALUES (\'{username}\', \'{academic_level}\')')
+        conn.execute(text(f'INSERT INTO AppUser (username, academic_level) VALUES (:username, :academic_level)'),
+          username = username, academic_level = academic_level)
       except:
         print("problem occured")
         conn.close()
