@@ -1,4 +1,5 @@
 import os
+import re
 from .prereq import check_prereq, is_antireq
 from .db_connect import db
 from sqlalchemy import text
@@ -478,11 +479,15 @@ def remove_from_user_schedule(username, class_numbers):
 ############ sql/helper functions for /instructor route ###########
 def get_instructor_classes(instructor_name):
   with db.connect() as conn:
+    instructor_name = instructor_name or ""
+    instructor_name = re.sub('[^a-zA-z]', ' ', instructor_name).split()
+    regex = "(" + "|".join(instructor_name) + ")" if len(instructor_name) > 0 else ".*"
     classes = conn.execute(
-      text("SELECT Class.class_number AS class_nbr, * "
-           "FROM Instructor, ClassTime, Class "
-           "WHERE Instructor.name LIKE :pattern and ClassTime.instructor_id = Instructor.id and ClassTime.class_number = Class.class_number;"),
-      {'pattern': f'%{instructor_name}%'}
+      text("SELECT Class.class_number AS class_nbr, Instructor.name AS inst_name, * "
+           "FROM Instructor, ClassTime, Class, Course "
+           "WHERE Instructor.name ~* :pattern and ClassTime.instructor_id = Instructor.id "
+           "and ClassTime.class_number = Class.class_number and Course.subject = Class.subject and Course.catalog_number = Class.catalog_number;"),
+      {'pattern': f'{regex}'}
     )
     classes_list = []
     for class_info in classes:
@@ -499,6 +504,8 @@ def get_instructor_classes(instructor_name):
         'topic': class_info['topic'],
         'section_number': class_info['section_number'],
         'academic_level': class_info['academic_level'],
+        'description': class_info['description'],
+        'instructor': class_info['inst_name'],
       }
       classes_list.append(class_info)
     conn.close()
