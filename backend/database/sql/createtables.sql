@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS AppUser (
 
 -- CoursesTaken --
 CREATE TABLE IF NOT EXISTS CoursesTaken (
-    username VARCHAR(30) NOT NULL REFERENCES AppUser(username),
+    username VARCHAR(30) NOT NULL REFERENCES AppUser(username) ON DELETE CASCADE ON UPDATE CASCADE,
     subject VARCHAR(10) NOT NULL,
     catalog_number VARCHAR(10) NOT NULL,
     FOREIGN KEY (subject, catalog_number) REFERENCES Course(subject, catalog_number) ON DELETE CASCADE,
@@ -77,7 +77,7 @@ CREATE TABLE IF NOT EXISTS CoursesTaken (
 
 -- UserSchedule --
 CREATE TABLE IF NOT EXISTS UserSchedule (
-    username VARCHAR(30) NOT NULL REFERENCES AppUser(username),
-    class_number INTEGER NOT NULL REFERENCES Class(class_number),
+    username VARCHAR(30) NOT NULL REFERENCES AppUser(username) ON DELETE CASCADE ON UPDATE CASCADE,
+    class_number INTEGER NOT NULL REFERENCES Class(class_number) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (username, class_number)
 );
