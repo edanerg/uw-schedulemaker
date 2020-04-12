@@ -3,12 +3,35 @@ Team members: Cheng Keat Chong, Anael Wan, Yuetong Wang, Sunny Yang
 Description of Work
 
 Sunny:
+(Milestone 0 and 1)
+- Created database schema
+- Wrote sql queries for creating tables and populating with sample data
+- Created E/R diagram for Course, Instructor, Class, ClassTime, InstructorClassTime, and Reserve
+- Created page at /courses, where user can view all UW courses and filter by subject or course code
+    - this includes the SQL queries for selecting courses
+- Created test-sample.sql and test-sample.out
+(Milestone 2)
 - Wrote report.pdf
 - Updated E/R diagram to reflect schema changes
 - Added instructor processing when grabbing data for classes
 - Created test-production.sql and test-production.out
+(Final)
+- Linked primary and related components in database
+- Filtered available classes such that primary components are included if and only if related components are included
+- Show Add to Schedule/Remove from Schedule button only for primary components
+- Implement dialog when user wants to add/remove classes that have related components
+- Contributed to video script, responsible for recording and editing video
+- Contributed to final report
 
 Ana:
+(Milestone 0 and 1)
+- Set up frontend and backend project.
+- Created Rest APIs on the backend using python3 so that the frontend can fetch info through API requests.
+- Used sqlAlchemy to connect to SQL instance in GCP. 
+- Write script grab data from Waterloo API to populate the SQL Class and Classtime table for local database.
+- Show course descriptions for the frontend page.
+- Add menu that allows user to go to the course or class page.
+(Milestone 2)
 - Update table schema
 - Add the '/schedule' route for the backend API. 
 - Add Main page component in the frontend app. User can paste their schedule and the app posts it to backend using the '<backend_url>/schedule' route
@@ -16,10 +39,23 @@ Ana:
 - Add new function that retrieves class info and schedule from Waterloo API using class_numbers
 - Allow user can view their schedule on the Main page whenever they log in again
 - Move all sql-related query functions to db_functions.py
+(Final)
 
-Cheng Keat Chong: 
+Cheng Keat Chong:
+(Milestone 0 and 1)
+- Wrote up report.pdf
+- Wrote script to grab data from Waterloo API to populate the SQL Course table for local database
+(Milestone 2)
 - Created parser for user's uploaded schedule
 - Modified User table and added UserSchedule table to store user's schedule
+(Final)
 
 Yuetong Wang:
+(Milestone 0 and 1)
+- created git repo and add front-end code.
+- create AppUser table and CoursesTaken table and added the corresponding backend endpoints
+- create user login frontEnd page
+- create the E/R diagram for AppUser and CoursesTaken
+(Milestone 2)
 - created user profile page and corresponding backend for user to uploaded taken courses
+(Final)
