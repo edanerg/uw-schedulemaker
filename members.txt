@@ -20,6 +20,7 @@ Sunny:
 - Filtered available classes such that primary components are included if and only if related components are included
 - Show Add to Schedule/Remove from Schedule button only for primary components
 - Implement dialog when user wants to add/remove classes that have related components
+- Updated README.md
 - Contributed to video script, responsible for recording and editing video
 - Contributed to final report
 
@@ -43,6 +44,7 @@ Ana:
 - Add user schedule feature on Main page
 - user can see list of classes they can add
 - class can add and remove classes from their schedule
+- Contributed to video script
 
 Cheng Keat Chong:
 (Milestone 0 and 1)
