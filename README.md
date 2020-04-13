@@ -19,6 +19,7 @@
     - The user has taken an antirequisite.
     - The user is busy during the main lecture time.
     - The user is available during the main lecture time, but is busy during the related component time (like tutorials or tests).
+
 The user can also add and remove classes from their schedule. A dialog will appear if the class has related components.
 **Files**: `~/backend/database/main.py`, `~/backend/database/db_functions.py`  and `~/frontend/src/components/mainpage.js` 
 
