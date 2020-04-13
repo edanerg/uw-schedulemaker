@@ -67,3 +67,6 @@ Yuetong Wang:
 (Milestone 2)
 - created user profile page and corresponding backend for user to uploaded taken courses
 (Final)
+- created instructor page front end, backend and database queries
+- fixed some front end bugs
+- Contributed to video script
