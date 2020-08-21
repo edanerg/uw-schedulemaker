@@ -1,7 +1,7 @@
 # uw-schedulemaker
 A CS348 project\
 \
-Upload courses you took in the past and get suggested courses to take and more
+Upload courses you took in the past and get suggestions on courses to take and more
 ![demo](img/screenshot.png)
 # Contributors:
 Ana Wan\
